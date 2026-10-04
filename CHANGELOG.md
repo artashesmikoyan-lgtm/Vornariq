@@ -6,6 +6,11 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Provider-neutral, sequential comparison runner that preserves ordered
+  execution evidence without selecting or ranking a provider.
+- Deterministic comparison tests covering validation, failure isolation,
+  exception sanitization, JSON safety, metrics, immutable inputs, and real
+  Codex/Gemini adapters through fake process seams.
 - Read-only Gemini CLI provider using headless `stream-json`, stdin prompt
   delivery, default approval policy, bounded process I/O, and sanitized
   provider-neutral result mapping.

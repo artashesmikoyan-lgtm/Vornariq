@@ -4,8 +4,8 @@
 
 > **Status: PRE-ALPHA.** This repository currently provides the project
 > foundation, provider-neutral TypeScript contracts, and local Codex and Gemini
-> CLI adapters. Routing, provider selection, and evaluation behavior are not
-> implemented yet.
+> CLI adapters plus a sequential comparison harness. Routing, provider
+> selection, and evaluation behavior are not implemented yet.
 
 ## What is Vornariq?
 
@@ -38,9 +38,9 @@ framework, or replacement for Codex.
 
 The project is in **PRE-ALPHA**. Milestones M0 through M2 establish the
 open-source repository, initial core contracts, and local Codex CLI provider; M3
-adds the shared provider conformance harness and read-only Gemini CLI provider.
-The package does not include an agent router, provider selection, an execution
-engine, or an evaluator.
+adds the shared provider conformance harness, read-only Gemini CLI provider, and
+first multi-provider comparison primitive. The package does not include an agent
+router, provider selection, an execution engine, or an evaluator.
 
 ## Planned Architecture
 
@@ -119,6 +119,29 @@ This adapter is read-only. It explicitly uses Gemini's non-interactive
 `approval-mode default`; it does not enable YOLO, auto-edit, skip-trust, raw
 output, or Plan Mode. Optional `sandbox: true` is available only when the local
 Gemini installation has a working sandbox runtime.
+
+## Provider Comparison
+
+`ComparisonRunner` executes two or more adapters sequentially with the same Task
+and Agent, then returns an ordered JSON-safe report of their provider-neutral
+execution results.
+
+```ts
+import { ComparisonRunner } from "vornariq";
+
+const report = await new ComparisonRunner().run({
+  schemaVersion: 1,
+  id: "comparison-001",
+  task,
+  agent,
+  participants: [{ adapter: codex }, { adapter: gemini }],
+});
+```
+
+The report is evidence only: it contains no winner, ranking, quality judgment,
+retry, fallback, or aggregate pricing calculation. Provider failures are
+retained as runs, while unexpected adapter exceptions are sanitized so later
+participants can still execute.
 
 ## Development
 

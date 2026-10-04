@@ -19,15 +19,19 @@ results, and evaluation results.
 Implement the first provider adapter while preserving provider-neutral core
 contracts.
 
-## M3 — Additional Providers (in progress)
+## M3 — Multi-provider foundation (in progress)
 
-Validate the provider boundary with additional adapters:
+Validate provider-neutral execution across multiple adapters:
 
 - [x] Provider Conformance Harness
-- [x] Gemini CLI Provider
-- [ ] OpenRouter Provider (next)
+- [x] Gemini CLI Provider implementation
+- [x] Provider Comparison Harness
+- [ ] Gemini real CLI compatibility smoke (public v0.1 release gate)
 
-## M4 — Router v1
+OpenRouter remains a future provider expansion after routing semantics are
+established.
+
+## M4 — Router v1 (next)
 
 Route tasks using explicit capabilities and deterministic policy.
 

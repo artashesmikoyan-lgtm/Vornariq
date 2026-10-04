@@ -36,6 +36,38 @@ Evaluation Engine
 Result + Metrics
 ```
 
+## Implemented Comparison Flow
+
+```text
+Task + Agent
+     │
+     ▼
+ComparisonRunner
+     │
+     ├── ProviderAdapter ──► Codex
+     └── ProviderAdapter ──► Gemini
+     │
+     ▼
+ComparisonReport
+```
+
+The v1 comparison runner is the first multi-provider orchestration primitive. It
+requires at least two uniquely identified adapters, executes them sequentially
+in caller-supplied order, and passes the same Task and Agent to each. Sequential
+execution is deliberate for reproducibility and controlled resource use;
+parallel execution is not implicit.
+
+Each report retains the existing provider-neutral `ExecutionResult` values
+rather than introducing a second execution schema. Provider-reported output,
+failures, metadata, metrics, and legitimate estimated cost therefore remain
+available without fabricated aggregates. Returned provider failures are
+evidence, not comparison infrastructure failures. Unexpected adapter exceptions
+become sanitized failed runs so later participants still execute.
+
+Comparison is not routing or fallback. Reports contain no winner, ranking,
+quality score, retry, or model judgment. The runner performs exactly one attempt
+per requested participant and currently has no timeout or cancellation policy.
+
 ## Core
 
 - **Task Router** will choose an eligible agent/model route from task

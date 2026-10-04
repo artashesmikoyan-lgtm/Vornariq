@@ -9,6 +9,15 @@ export const project = {
 
 export type ProjectMetadata = typeof project;
 
+export { ComparisonError, ComparisonRunner } from "./comparison/index.js";
+export type {
+  ComparisonErrorCode,
+  ComparisonParticipant,
+  ComparisonReport,
+  ComparisonRequest,
+  ComparisonRun,
+} from "./comparison/index.js";
+
 export type {
   Agent,
   AgentCapability,

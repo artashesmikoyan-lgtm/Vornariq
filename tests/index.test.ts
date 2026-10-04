@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   codexProvider,
   CodexProviderAdapter,
+  ComparisonError,
+  ComparisonRunner,
   geminiProvider,
   GeminiProviderAdapter,
   NodeGeminiProcessRunner,
@@ -10,6 +12,10 @@ import {
 } from "../src/index.js";
 import type {
   Agent,
+  ComparisonParticipant,
+  ComparisonReport,
+  ComparisonRequest,
+  ComparisonRun,
   EvaluationResult,
   ExecutionResult,
   JsonValue,
@@ -28,6 +34,9 @@ type PublicCoreContracts =
   | ProviderAdapter
   | ProviderExecutionRequest
   | Task;
+
+type PublicComparisonContracts =
+  ComparisonParticipant | ComparisonReport | ComparisonRequest | ComparisonRun;
 
 describe("project metadata", () => {
   it("exposes the package identity without claiming implemented orchestration", () => {
@@ -63,5 +72,19 @@ describe("project metadata", () => {
     expect(geminiProvider.id).toBe("gemini");
     expect(GeminiProviderAdapter).toBeTypeOf("function");
     expect(NodeGeminiProcessRunner).toBeTypeOf("function");
+  });
+
+  it("exports the deliberate comparison API from the package entry point", () => {
+    const participant: ComparisonParticipant = {
+      adapter: {
+        provider: codexProvider,
+        execute: () => Promise.reject(new Error("not executed")),
+      },
+    };
+    const publicContract: PublicComparisonContracts = participant;
+
+    expect(publicContract).toBe(participant);
+    expect(ComparisonRunner).toBeTypeOf("function");
+    expect(ComparisonError).toBeTypeOf("function");
   });
 });
