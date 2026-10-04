@@ -9,6 +9,17 @@ export const project = {
 
 export type ProjectMetadata = typeof project;
 
+export {
+  OrchestrationError,
+  RouteAndExecuteOrchestrator,
+} from "./orchestration/index.js";
+export type {
+  OrchestrationClock,
+  OrchestrationErrorCode,
+  RouteAndExecuteRequest,
+  RouteAndExecuteResult,
+} from "./orchestration/index.js";
+
 export { RoutingError, RuleBasedRouter } from "./router/index.js";
 export type {
   ConsideredProvider,

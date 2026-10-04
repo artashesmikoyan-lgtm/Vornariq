@@ -2,7 +2,7 @@
 
 This document separates Vornariq's implemented contracts and provider adapters
 from its target runtime architecture. Deterministic provider selection and
-sequential comparison are implemented; routed execution and evaluation remain
+sequential comparison and routed execution are implemented; evaluation remains
 planned.
 
 ## Principles
@@ -109,8 +109,77 @@ reasons. Decisions contain only JSON data, never adapters, Task/Agent payloads,
 executable objects, or configuration secrets. Inputs are not mutated.
 
 See the [README example policy](README.md#deterministic-provider-routing).
-TASK-008 may consume a decision and runtime candidate map to execute exactly the
-selected adapter. That orchestration is not implemented by Router v1.
+TASK-008 connects this selection-only router to execution in a separate layer.
+
+## Implemented Routed Execution (TASK-008)
+
+```text
+Task + Agent + explicit requirements + configured candidates + policy
+     │
+     ▼
+RuleBasedRouter
+     │
+     ▼
+RoutingDecision
+     │
+     ▼
+RouteAndExecuteOrchestrator
+     │
+     ▼
+selected ProviderAdapter (one attempt)
+     │
+     ▼
+ExecutionResult
+```
+
+`RouteAndExecuteOrchestrator.run(request)` owns this complete flow. Its request
+extends RoutingRequest with `policy`, keeping one Task, Agent, and candidate
+list. It invokes the existing router once, resolves `selectedProviderId`
+directly from that same candidate list, and passes the exact Task and Agent
+references to the selected adapter. Routing semantics are not duplicated. No
+input is mutated by orchestration; providers remain responsible for respecting
+their readonly input contract.
+
+The caller's routing request `id` also identifies the orchestration. The
+provider execution ID is deterministically `${id}:execution`. Callers should use
+a new ID for each distinct operation. There is no random ID generation,
+persistence, or cross-call deduplication: explicitly calling `run` again creates
+another attempt. Routing `createdAt` remains caller-supplied. Orchestration
+`startedAt` and `completedAt` use an injectable `{ now(): Date }` clock and
+normalized ISO UTC strings; completion is clamped to the start if the wall clock
+moves backward. Invalid Date values produce `ORCHESTRATION_INVALID_CLOCK`.
+
+The durable result is a discriminated union:
+
+- `unroutable`: includes the actual unroutable RoutingDecision, IDs, and
+  timestamps; has no ExecutionResult and invokes zero providers.
+- `executed`: includes the actual selected RoutingDecision and the adapter's
+  unchanged ExecutionResult, plus IDs and timestamps. It means one attempt
+  returned, not that the provider succeeded.
+
+Provider-returned failure is retained as data, including its error, metrics,
+metadata, and retryable flag, without another attempt. Unexpected synchronous
+throws or rejected promises are converted into a failed ExecutionResult using
+the same sanitization pattern as ComparisonRunner: a fixed
+`ORCHESTRATION_PROVIDER_EXCEPTION` code/message, `retryable: false`, and no raw
+exception, stack, environment, or fabricated metrics. ComparisonRunner itself is
+never invoked. Router configuration errors propagate as RoutingError; an
+unresolvable selection throws `ORCHESTRATION_SELECTED_PROVIDER_MISSING` as an
+internal invariant failure. Infrastructure errors are outside the provider
+exception catch boundary.
+
+Results contain no runtime candidates, adapters, or provider configuration. JSON
+safety of provider-returned values relies on the existing ExecutionResult
+contract and provider conformance; orchestration preserves these values rather
+than rewriting or repairing them. Provider execution, unlike routing, need not
+be deterministic; deterministic fakes and clocks provide reproducible tests.
+
+This is the first complete routed execution flow, not a complete product MVP. It
+executes one provider only, with deterministic routing, no fallback, no retry,
+no parallel execution, no comparison, and no quality scoring. It does not infer
+requirements from natural language or escalate permissions. Effective capability
+declarations remain the caller's trust boundary, and adapters arrive already
+configured. Timeout and cancellation behavior remain with the existing adapters.
 
 ## Implemented Comparison Flow
 
@@ -149,7 +218,8 @@ per requested participant and currently has no timeout or cancellation policy.
 - **Task Router** selects an eligible configured provider from explicit
   requirements and policy. Agent/model selection and registry integration remain
   planned.
-- **Execution Engine** will run an approved route and normalize provider output.
+- **Routed Execution** invokes the selected adapter once; adapters normalize
+  provider output. Broader execution-engine policy remains planned.
 - **Evaluation Engine** will review results independently using deterministic
   checks where possible and model-based review only when justified.
 - **Policy Layer** will constrain providers, tools, credentials, budgets, and

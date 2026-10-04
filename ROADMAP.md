@@ -28,6 +28,10 @@ Validate provider-neutral execution across multiple adapters:
 - [x] Provider Comparison Harness
 - [ ] Gemini real CLI compatibility smoke (public v0.1 release gate)
 
+Before public v0.1, install a supported Gemini CLI, verify its version/help and
+required flags, and run one explicitly approved read-only end-to-end smoke.
+Deterministic fake-process integration tests do not close this gate.
+
 OpenRouter remains a future provider expansion after routing semantics are
 established.
 
@@ -37,11 +41,18 @@ Select configured providers using explicit effective capabilities, eligibility
 filters, and ordered deterministic policy. Decisions are explainable and
 JSON-safe; routing does not execute providers or consume comparison results.
 
-## Next task — TASK-008: Route-and-Execute Orchestrator v1
+## TASK-008 — Route-and-Execute Orchestrator v1 (complete)
 
-Consume a RoutingDecision and runtime candidate map, invoking exactly the
-selected ProviderAdapter. Routed execution is not implemented yet. The Gemini
-real CLI compatibility smoke remains a public v0.1 release gate under M3.
+The first complete routed execution flow reuses RuleBasedRouter and executes
+exactly one selected ProviderAdapter from the same runtime candidate list.
+Unroutable decisions execute nothing; provider failures and sanitized exceptions
+never trigger fallback or retry. This does not mark the entire MVP complete. The
+Gemini real CLI smoke remains a public v0.1 release gate under M3.
+
+## Next task — TASK-009: Router/Orchestrator CLI command
+
+Expose routed execution through `vornariq run` with explicit `--require`
+capabilities. The CLI is not implemented in TASK-008.
 
 ## M5 — Agent Registry
 

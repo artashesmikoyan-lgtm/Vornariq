@@ -5,7 +5,7 @@
 > **Status: PRE-ALPHA.** This repository currently provides the project
 > foundation, provider-neutral TypeScript contracts, and local Codex and Gemini
 > CLI adapters, a sequential comparison harness, and deterministic provider
-> routing. Routed execution and evaluation are not implemented yet.
+> routing with single-provider execution. Evaluation is not implemented yet.
 
 ## What is Vornariq?
 
@@ -40,7 +40,8 @@ The project is in **PRE-ALPHA**. Milestones M0 through M2 establish the
 open-source repository, initial core contracts, and local Codex CLI provider; M3
 adds the shared provider conformance harness, read-only Gemini CLI provider, and
 first multi-provider comparison primitive. M4 adds explicit, rule-based provider
-selection. The package does not yet include routed execution or an evaluator.
+selection. TASK-008 connects routing to exactly one provider execution. An
+evaluator and the CLI remain planned; this is not a complete product MVP.
 
 ## Planned Architecture
 
@@ -74,8 +75,8 @@ pnpm install
 pnpm check
 ```
 
-Runtime exports include project identity, provider adapters, comparison, and
-routing; core contracts are exported as TypeScript types:
+Runtime exports include project identity, provider adapters, comparison,
+routing, and routed execution; core contracts are exported as TypeScript types:
 
 ```ts
 import { project } from "vornariq";
@@ -223,6 +224,39 @@ and rejections, survive JSON round-trip, and use caller-supplied IDs/timestamps
 for determinism. No eligible candidate returns `status: "unroutable"`. See
 [routing semantics](ARCHITECTURE.md#implemented-routing-flow-m4) for input
 validation, empty-list behavior, and the capability trust boundary.
+
+## Routed Execution
+
+`RouteAndExecuteOrchestrator` runs the router, then invokes exactly the selected
+adapter once. Supply an existing RoutingRequest and the example policy above:
+
+```ts
+import { RouteAndExecuteOrchestrator } from "vornariq";
+
+const result = await new RouteAndExecuteOrchestrator().run({
+  ...routingRequest,
+  policy,
+});
+
+if (result.status === "executed") {
+  console.log(result.routingDecision.selectedProviderId);
+  console.log(result.executionResult.status); // Provider success or failure.
+}
+```
+
+Unlike selection-only routing, this operation executes the configured provider
+and can consume its quota. The request ID identifies the orchestration; the
+execution ID is `${id}:execution`. One shared candidate list supplies both
+routing and execution, with the same Task and Agent objects.
+
+An unroutable result invokes no adapter. Provider failures remain unchanged
+execution data, and unexpected adapter exceptions become sanitized failures.
+There is no fallback, retry, comparison, quality scoring, or permission
+escalation. Effective capabilities must truthfully describe adapter
+configuration. The result retains the actual routing decision and provider
+result as JSON-safe evidence under the existing provider contract. See
+[routed execution architecture](ARCHITECTURE.md#implemented-routed-execution-task-008)
+for identity, timestamps, and error semantics.
 
 ## Development
 

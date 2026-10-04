@@ -6,6 +6,14 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Provider-neutral RouteAndExecuteOrchestrator connecting deterministic routing
+  to exactly one selected adapter, with preserved routing/execution evidence,
+  deterministic execution IDs, and injectable orchestration timestamps.
+- Unroutable outcomes with zero execution, provider failures retained as data,
+  and sanitized unexpected exceptions without retry or fallback.
+- Focused orchestration tests and real Codex/Gemini integration through fake
+  process runners, including read/write permission boundaries.
+
 - Deterministic provider-neutral Router v1 with explicit effective capabilities,
   eligibility filters, ordered rules, documented preference precedence, and
   JSON-safe selected/unroutable decisions with rejection reasons.
