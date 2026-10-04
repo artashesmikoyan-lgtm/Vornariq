@@ -19,9 +19,13 @@ results, and evaluation results.
 Implement the first provider adapter while preserving provider-neutral core
 contracts.
 
-## M3 — Gemini/OpenRouter Providers (next)
+## M3 — Additional Providers (in progress)
 
-Validate the provider boundary with Gemini and OpenRouter adapters.
+Validate the provider boundary with additional adapters:
+
+- [x] Provider Conformance Harness
+- [ ] Gemini CLI Provider (next)
+- [ ] OpenRouter Provider (later)
 
 ## M4 — Router v1
 

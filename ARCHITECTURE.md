@@ -98,6 +98,21 @@ Codex authentication files, accept API keys for this adapter, bypass local
 rules, or depend directly on the OpenAI API. Session resume, output schemas,
 routing, and public streaming APIs remain out of scope.
 
+### Provider Conformance Harness (Implemented)
+
+Every provider adapter is expected to pass the shared test-only conformance
+harness before it is treated as supported. The harness exercises deterministic
+success and failure seams without credentials, network access, or provider
+executables. It verifies stable provider identity, portable execution fields,
+JSON-safe durable values, normalized UTC timestamps, input immutability,
+optional metrics discipline, structured failures, and removal of sensitive
+diagnostics.
+
+The harness intentionally permits provider-specific JSON metadata and output
+fields. It does not expose provider SDK or process types, require every provider
+to report the same metrics, or replace focused tests for provider-specific
+transport and protocol behavior.
+
 ## Core Contracts (Implemented in M1)
 
 The initial contract layer is exported from `src/core/contracts`:

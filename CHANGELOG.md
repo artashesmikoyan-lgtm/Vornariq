@@ -6,6 +6,11 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Reusable provider conformance harness covering portable success and failure
+  results, JSON safety, immutable inputs, timestamps, metrics, and secret
+  sanitization.
+- Codex CLI adapter conformance coverage using deterministic fake process and
+  clock seams with no live provider calls.
 - Initial Codex CLI provider using local `codex exec --json`, deterministic
   prompts, bounded process I/O, JSONL event parsing, and provider-neutral result
   mapping.
