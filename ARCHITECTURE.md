@@ -72,6 +72,32 @@ Provider-specific authentication, SDKs, and response formats belong behind
 adapter boundaries. The core must not require Codex-specific types even though
 Codex is the first planned provider.
 
+### Initial Codex CLI Transport (Implemented in M2)
+
+The first provider adapter uses the locally installed Codex CLI through
+`codex exec --json`. This is the initial transport decision, not a permanent
+restriction; another Codex SDK or API transport may coexist later if
+requirements justify it.
+
+The adapter:
+
+- passes a deterministic Task + Agent prompt over stdin without shell
+  interpolation;
+- consumes JSONL execution events and captures only the completed agent message;
+- combines process exit state with terminal events before reporting success;
+- maps portable token usage when Codex supplies it and measures duration with a
+  monotonic clock (total tokens are derived only when both input and output
+  counts are present);
+- defaults to the `read-only` sandbox and requires callers to select
+  `workspace-write` explicitly; and
+- bounds incomplete JSONL lines and final messages to 1 MiB and stderr capture
+  to 64 KiB.
+
+Codex CLI owns authentication and user configuration. Vornariq does not read
+Codex authentication files, accept API keys for this adapter, bypass local
+rules, or depend directly on the OpenAI API. Session resume, output schemas,
+routing, and public streaming APIs remain out of scope.
+
 ## Core Contracts (Implemented in M1)
 
 The initial contract layer is exported from `src/core/contracts`:

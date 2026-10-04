@@ -6,6 +6,11 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Initial Codex CLI provider using local `codex exec --json`, deterministic
+  prompts, bounded process I/O, JSONL event parsing, and provider-neutral result
+  mapping.
+- Deterministic Codex fixtures and tests for command security, success,
+  failures, usage, protocol evolution, and public exports.
 - Initial provider-neutral core contracts for tasks, agents, providers,
   executions, evaluations, metrics, errors, and JSON-safe values.
 - Deterministic contract, serialization, provider-boundary, and type-safety

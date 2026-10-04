@@ -3,9 +3,9 @@
 **Intelligent orchestration for coding agents.**
 
 > **Status: PRE-ALPHA.** This repository currently provides the project
-> foundation and initial provider-neutral TypeScript contracts. Routing,
-> provider integrations, execution, and evaluation behavior are planned and are
-> not implemented yet.
+> foundation, provider-neutral TypeScript contracts, and an initial local Codex
+> CLI adapter. Routing, additional providers, and evaluation behavior are not
+> implemented yet.
 
 ## What is Vornariq?
 
@@ -14,7 +14,7 @@ It is intended to complement coding agents—not replace them—by providing a
 provider-neutral place to route tasks, execute work, review results
 independently, and compare quality, cost, and latency.
 
-Codex-native workflows are an initial priority. The target ecosystem also
+Codex CLI is the first implemented provider boundary. The target ecosystem also
 includes Gemini, OpenRouter, local providers, specialized agents, controlled
 skills, MCP tools, and reproducible evaluation.
 
@@ -36,9 +36,10 @@ framework, or replacement for Codex.
 
 ## Status
 
-The project is in **PRE-ALPHA**. Milestones M0 and M1 establish the open-source
-repository and initial core contracts. The package does not include an agent
-router, provider implementation, execution engine, or evaluator.
+The project is in **PRE-ALPHA**. Milestones M0 through M2 establish the
+open-source repository, initial core contracts, and local Codex CLI provider.
+The package does not include an agent router, additional providers, an execution
+engine, or an evaluator.
 
 ## Planned Architecture
 
@@ -80,6 +81,24 @@ import { project } from "vornariq";
 
 console.log(project.status); // "pre-alpha"
 ```
+
+## Codex CLI Provider
+
+The initial provider invokes the locally installed `codex exec --json`. Codex
+CLI retains ownership of authentication and user configuration; Vornariq does
+not read Codex auth files or accept API keys for this adapter.
+
+```ts
+import { CodexProviderAdapter } from "vornariq";
+
+const provider = new CodexProviderAdapter({
+  workingDirectory: process.cwd(),
+});
+```
+
+The sandbox defaults to `read-only`. Callers must explicitly select
+`workspace-write` when a task needs repository changes. General routing and
+session resume are not implemented.
 
 ## Development
 

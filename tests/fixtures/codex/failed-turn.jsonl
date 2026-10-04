@@ -1,0 +1,3 @@
+{"type":"thread.started","thread_id":"thread-test-002"}
+{"type":"turn.started"}
+{"type":"turn.failed","error":{"code":"tool_failure","message":"The turn could not complete."}}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { project } from "../src/index.js";
+import { codexProvider, CodexProviderAdapter, project } from "../src/index.js";
 import type {
   Agent,
   EvaluationResult,
@@ -45,5 +45,10 @@ describe("project metadata", () => {
 
     expect(publicContract).toBe(task);
     expect(task.schemaVersion).toBe(1);
+  });
+
+  it("exports the Codex provider from the package entry point", () => {
+    expect(codexProvider.id).toBe("codex");
+    expect(CodexProviderAdapter).toBeTypeOf("function");
   });
 });

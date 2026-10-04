@@ -14,12 +14,12 @@ in scope.
 Validate and implement minimal contracts for tasks, agents, providers, execution
 results, and evaluation results.
 
-## M2 — Codex Provider (next)
+## M2 — Codex Provider (complete)
 
 Implement the first provider adapter while preserving provider-neutral core
 contracts.
 
-## M3 — Gemini/OpenRouter Providers
+## M3 — Gemini/OpenRouter Providers (next)
 
 Validate the provider boundary with Gemini and OpenRouter adapters.
 

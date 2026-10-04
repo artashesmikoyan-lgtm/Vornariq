@@ -44,3 +44,17 @@ export type {
   Task,
   TaskId,
 } from "./core/contracts/index.js";
+
+export {
+  codexProvider,
+  CodexProviderAdapter,
+  NodeCodexProcessRunner,
+} from "./providers/codex/index.js";
+export type {
+  CodexClock,
+  CodexProcessRequest,
+  CodexProcessResult,
+  CodexProcessRunner,
+  CodexProviderOptions,
+  CodexSandboxMode,
+} from "./providers/codex/index.js";

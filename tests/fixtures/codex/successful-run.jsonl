@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"thread-test-001"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item-001","type":"agent_message","text":"Vornariq task completed."}}
+{"type":"turn.completed","usage":{"input_tokens":120,"cached_input_tokens":20,"output_tokens":30,"reasoning_output_tokens":5}}
