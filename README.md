@@ -3,8 +3,9 @@
 **Intelligent orchestration for coding agents.**
 
 > **Status: PRE-ALPHA.** This repository currently provides the project
-> foundation only. Routing, provider integrations, execution, and evaluation are
-> planned and are not implemented yet.
+> foundation and initial provider-neutral TypeScript contracts. Routing,
+> provider integrations, execution, and evaluation behavior are planned and are
+> not implemented yet.
 
 ## What is Vornariq?
 
@@ -35,9 +36,9 @@ framework, or replacement for Codex.
 
 ## Status
 
-The project is in **PRE-ALPHA**. Milestone M0 establishes the open-source
-repository, TypeScript package, quality gates, documentation, and CI. It does
-not include an agent router or any provider adapter.
+The project is in **PRE-ALPHA**. Milestones M0 and M1 establish the open-source
+repository and initial core contracts. The package does not include an agent
+router, provider implementation, execution engine, or evaluator.
 
 ## Planned Architecture
 
@@ -71,7 +72,8 @@ pnpm install
 pnpm check
 ```
 
-The only current runtime export is truthful project identity metadata:
+The runtime export remains truthful project identity metadata; core contracts
+are exported as TypeScript types:
 
 ```ts
 import { project } from "vornariq";

@@ -3,18 +3,18 @@
 Vornariq is PRE-ALPHA. Milestone scope may change as contracts are validated,
 but the provider-neutral and local-first principles remain durable.
 
-## M0 — OSS Foundation (current)
+## M0 — OSS Foundation (complete)
 
 Establish the TypeScript package, repository structure, public documentation,
 quality gates, deterministic baseline test, and CI. No orchestration behavior is
 in scope.
 
-## M1 — Core Contracts
+## M1 — Core Contracts (complete)
 
 Validate and implement minimal contracts for tasks, agents, providers, execution
 results, and evaluation results.
 
-## M2 — Codex Provider
+## M2 — Codex Provider (next)
 
 Implement the first provider adapter while preserving provider-neutral core
 contracts.

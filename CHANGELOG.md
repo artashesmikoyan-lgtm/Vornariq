@@ -6,6 +6,10 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Initial provider-neutral core contracts for tasks, agents, providers,
+  executions, evaluations, metrics, errors, and JSON-safe values.
+- Deterministic contract, serialization, provider-boundary, and type-safety
+  tests.
 - Initial open-source repository foundation.
 - Strict TypeScript package with truthful pre-alpha project metadata.
 - Formatting, linting, type-checking, testing, and build quality gates.

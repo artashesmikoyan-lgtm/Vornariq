@@ -1,8 +1,9 @@
 # Target Architecture
 
-This document describes Vornariq's intended architecture. It is a design
-direction, not a statement of implemented capability. TASK-001 implements only
-package identity metadata and repository tooling.
+This document separates Vornariq's implemented contract layer from its target
+runtime architecture. M1 implements only the initial provider-neutral core
+contracts; routing, provider adapters, execution, and evaluation behavior remain
+planned.
 
 ## Principles
 
@@ -71,19 +72,34 @@ Provider-specific authentication, SDKs, and response formats belong behind
 adapter boundaries. The core must not require Codex-specific types even though
 Codex is the first planned provider.
 
-## Conceptual Contracts
+## Core Contracts (Implemented in M1)
 
-The following names guide M1 design and are deliberately not final interfaces:
+The initial contract layer is exported from `src/core/contracts`:
 
-- **Task**: requested outcome, inputs, constraints, and acceptance checks.
-- **Agent**: an execution role plus declared capabilities and allowed resources.
-- **Provider**: an adapter that can execute supported agent/model requests.
-- **ExecutionResult**: normalized output, status, diagnostics, and observed
-  metrics.
-- **EvaluationResult**: independent checks, findings, and a reasoned outcome.
+- **Task** describes requested work, structured input, constraints, and creation
+  time without provider or routing choices.
+- **Agent** describes a logical worker role and open, portable capability
+  identifiers. It does not contain prompts or process state.
+- **Provider** contains provider identity and capability metadata. The separate
+  **ProviderAdapter** interface is the behavioral boundary for future adapters.
+- **ExecutionResult** is a discriminated lifecycle union for pending, running,
+  succeeded, failed, and cancelled attempts. Successful output and structured
+  failure data remain provider-neutral.
+- **EvaluationResult** records a separate assessment, optional ranged score, and
+  qualitative findings.
 
-M1 will validate fields, lifecycle, error semantics, and serialization before
-these contracts become public API.
+Every top-level durable M1 object has `schemaVersion: 1`. Durable timestamps are
+ISO 8601 UTC strings, IDs are stable strings within their owning scope, and
+metadata, input, output, and details use the recursive `JsonValue` model. These
+values require ordinary JSON data: no functions, `Date`, `BigInt`, `Map`, `Set`,
+or provider SDK instances.
+
+The contracts are TypeScript compile-time boundaries; M1 does not add runtime
+schema validation. Provider implementations must explicitly translate SDK
+requests, responses, errors, and usage into these types. No provider SDK type is
+part of the core.
+
+These are initial pre-1.0 contracts and may evolve before Vornariq 1.0.
 
 ## Observability
 
