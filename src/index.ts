@@ -9,6 +9,19 @@ export const project = {
 
 export type ProjectMetadata = typeof project;
 
+export { RoutingError, RuleBasedRouter } from "./router/index.js";
+export type {
+  ConsideredProvider,
+  RoutingCandidate,
+  RoutingDecision,
+  RoutingErrorCode,
+  RoutingPolicy,
+  RoutingRejectionReason,
+  RoutingRequest,
+  RoutingRule,
+  RoutingSelectionSource,
+} from "./router/index.js";
+
 export { ComparisonError, ComparisonRunner } from "./comparison/index.js";
 export type {
   ComparisonErrorCode,

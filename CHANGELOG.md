@@ -6,6 +6,14 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Deterministic provider-neutral Router v1 with explicit effective capabilities,
+  eligibility filters, ordered rules, documented preference precedence, and
+  JSON-safe selected/unroutable decisions with rejection reasons.
+- Router validation, determinism, immutable-input, and real-adapter integration
+  tests proving selection without provider execution or security changes.
+- Example routing policy and documented caller capability trust boundary;
+  routing does not infer requirements or consume comparison evidence.
+
 - Provider-neutral, sequential comparison runner that preserves ordered
   execution evidence without selecting or ranking a provider.
 - Deterministic comparison tests covering validation, failure isolation,

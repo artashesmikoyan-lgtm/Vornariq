@@ -4,8 +4,8 @@
 
 > **Status: PRE-ALPHA.** This repository currently provides the project
 > foundation, provider-neutral TypeScript contracts, and local Codex and Gemini
-> CLI adapters plus a sequential comparison harness. Routing, provider
-> selection, and evaluation behavior are not implemented yet.
+> CLI adapters, a sequential comparison harness, and deterministic provider
+> routing. Routed execution and evaluation are not implemented yet.
 
 ## What is Vornariq?
 
@@ -39,8 +39,8 @@ framework, or replacement for Codex.
 The project is in **PRE-ALPHA**. Milestones M0 through M2 establish the
 open-source repository, initial core contracts, and local Codex CLI provider; M3
 adds the shared provider conformance harness, read-only Gemini CLI provider, and
-first multi-provider comparison primitive. The package does not include an agent
-router, provider selection, an execution engine, or an evaluator.
+first multi-provider comparison primitive. M4 adds explicit, rule-based provider
+selection. The package does not yet include routed execution or an evaluator.
 
 ## Planned Architecture
 
@@ -74,8 +74,8 @@ pnpm install
 pnpm check
 ```
 
-The runtime export remains truthful project identity metadata; core contracts
-are exported as TypeScript types:
+Runtime exports include project identity, provider adapters, comparison, and
+routing; core contracts are exported as TypeScript types:
 
 ```ts
 import { project } from "vornariq";
@@ -98,8 +98,8 @@ const provider = new CodexProviderAdapter({
 ```
 
 The sandbox defaults to `read-only`. Callers must explicitly select
-`workspace-write` when a task needs repository changes. General routing and
-session resume are not implemented.
+`workspace-write` when a task needs repository changes. Session resume is not
+implemented.
 
 ## Gemini CLI Provider
 
@@ -142,6 +142,87 @@ The report is evidence only: it contains no winner, ranking, quality judgment,
 retry, fallback, or aggregate pricing calculation. Provider failures are
 retained as runs, while unexpected adapter exceptions are sanitized so later
 participants can still execute.
+
+## Deterministic Provider Routing
+
+`RuleBasedRouter` selects an already configured candidate without executing it.
+The caller supplies effective capabilities; the router trusts these declarations
+and does not inspect CLI permissions or change security settings. Requirements
+are explicit, never inferred from Task text or Agent capabilities.
+
+This **example policy** illustrates configurable preference, not a claim about
+provider quality, price, or speed. Given existing `task` and `agent` values:
+
+```ts
+import {
+  CodexProviderAdapter,
+  GeminiProviderAdapter,
+  RuleBasedRouter,
+} from "vornariq";
+import type { RoutingPolicy } from "vornariq";
+
+const policy: RoutingPolicy = {
+  schemaVersion: 1,
+  rules: [
+    {
+      id: "workspace-write",
+      when: { requiredCapabilitiesAll: ["local-repository-write"] },
+      preferProviders: ["codex"],
+    },
+    {
+      id: "repository-read",
+      when: { requiredCapabilitiesAll: ["local-repository-read"] },
+      preferProviders: ["gemini", "codex"],
+    },
+  ],
+  defaultProviderOrder: ["codex", "gemini"],
+};
+
+const decision = new RuleBasedRouter().route(
+  {
+    schemaVersion: 1,
+    id: "route-001",
+    createdAt: "2026-10-05T00:00:00.000Z",
+    task,
+    agent,
+    requiredCapabilities: ["text-output", "local-repository-read"],
+    candidates: [
+      {
+        providerId: "codex",
+        adapter: new CodexProviderAdapter({
+          workingDirectory: process.cwd(),
+          sandbox: "workspace-write",
+        }),
+        capabilities: [
+          "text-output",
+          "local-repository-read",
+          "local-repository-write",
+        ],
+      },
+      {
+        providerId: "gemini",
+        adapter: new GeminiProviderAdapter({ workingDirectory: process.cwd() }),
+        capabilities: ["text-output", "local-repository-read"],
+      },
+    ],
+  },
+  policy,
+);
+// selectedProviderId: "gemini"; no provider invocation.
+```
+
+Adding `local-repository-write` to requirements selects the configured Codex
+candidate and rejects read-only Gemini. A read-only Codex candidate must also
+omit write from its effective capabilities. The router never grants permissions.
+
+Eligibility uses exact ALL capability matching plus enabled/allowed/excluded
+filters. Selection tries the first matching rule, request preferences, policy
+defaults, then original candidate order. Unavailable or ineligible preferences
+are skipped; later matching rules are never used. Decisions explain selection
+and rejections, survive JSON round-trip, and use caller-supplied IDs/timestamps
+for determinism. No eligible candidate returns `status: "unroutable"`. See
+[routing semantics](ARCHITECTURE.md#implemented-routing-flow-m4) for input
+validation, empty-list behavior, and the capability trust boundary.
 
 ## Development
 

@@ -31,9 +31,17 @@ Validate provider-neutral execution across multiple adapters:
 OpenRouter remains a future provider expansion after routing semantics are
 established.
 
-## M4 — Router v1 (next)
+## M4 — Router v1 (complete)
 
-Route tasks using explicit capabilities and deterministic policy.
+Select configured providers using explicit effective capabilities, eligibility
+filters, and ordered deterministic policy. Decisions are explainable and
+JSON-safe; routing does not execute providers or consume comparison results.
+
+## Next task — TASK-008: Route-and-Execute Orchestrator v1
+
+Consume a RoutingDecision and runtime candidate map, invoking exactly the
+selected ProviderAdapter. Routed execution is not implemented yet. The Gemini
+real CLI compatibility smoke remains a public v0.1 release gate under M3.
 
 ## M5 — Agent Registry
 

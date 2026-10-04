@@ -1,8 +1,9 @@
 # Target Architecture
 
 This document separates Vornariq's implemented contracts and provider adapters
-from its target runtime architecture. Routing, provider selection, execution
-orchestration, and evaluation behavior remain planned.
+from its target runtime architecture. Deterministic provider selection and
+sequential comparison are implemented; routed execution and evaluation remain
+planned.
 
 ## Principles
 
@@ -35,6 +36,81 @@ Evaluation Engine
    ▼
 Result + Metrics
 ```
+
+## Implemented Routing Flow (M4)
+
+```text
+Task + Agent + explicit RoutingRequest requirements
+     │
+     ├── configured RoutingCandidates (effective capabilities)
+     └── ordered RoutingPolicy
+     ▼
+RuleBasedRouter
+     ▼
+RoutingDecision
+     └── selectedProviderId (e.g. Codex or Gemini), or unroutable
+```
+
+`RuleBasedRouter.route(request, policy)` is synchronous selection only, above
+the unchanged core contracts. It does not inspect Task natural language or Agent
+capabilities to infer requirements, execute adapters, call ComparisonRunner,
+consume comparison results, rank model quality, estimate cost or latency, or
+infer provider capabilities. There are no built-in provider preferences.
+
+Candidates contain a unique `providerId` matching `adapter.provider.id`, a
+runtime adapter, explicit effective `capabilities`, and optional `enabled`
+(omission means enabled). **The router trusts these declarations.** It does not
+verify CLI permissions or copy theoretical adapter metadata into effective
+capabilities. A read-only configured adapter must not be declared write-capable.
+Future factories may derive declarations from configuration. Routing never
+changes sandboxes, approval modes, credentials, trust, or environment settings.
+
+Eligibility is evaluated first, in candidate order. Every required capability
+must occur exactly in the candidate's effective capabilities. Identifiers are
+open, case-sensitive strings: unknown future capabilities work, and write does
+not imply read. Disabled candidates, excluded providers, and providers outside
+an existing allow-list are ineligible. An empty allow-list permits none;
+exclusion still applies to allowed providers. Empty requirements impose no
+capability restriction. All applicable rejection reasons are recorded, in
+disabled/allow-list/exclusion/missing-capability order; missing capabilities
+follow request order. Preference never overrides eligibility.
+
+Rules are evaluated in declared order. `when.requiredCapabilitiesAll` matches
+against explicit request requirements with ALL semantics; an empty list is
+unconditional. The first matching rule alone supplies preferences. Selection
+tries the following ordered lists, skipping unknown and ineligible provider IDs:
+
+1. The first matching rule's `preferProviders`.
+2. The request's `preferredProviderIds`.
+3. The policy's `defaultProviderOrder`.
+4. Original candidate order.
+
+If a matched rule has no usable preference, routing continues at step 2, never
+tries another rule, and retains `matchedRuleId`. Empty or omitted preference
+lists fall through. There is no sorting, weighting, execution fallback, retry,
+or hidden provider-specific behavior.
+
+The request supplies `schemaVersion: 1`, stable `id`, normalized ISO UTC
+`createdAt`, Task, Agent, candidates, and required capabilities. The policy uses
+`schemaVersion: 1`, rules, and an optional default order. All routing lists must
+contain unique non-empty strings. Empty request/candidate/rule IDs, duplicate
+candidate or rule IDs, malformed policy or routing fields, mismatched adapter
+identity, and zero candidates throw `RoutingError`. Core Task/Agent payload
+validation remains the caller's responsibility; routing only consumes their IDs.
+
+Decisions copy the request ID and timestamp; there is no internal clock or
+randomness. Identical inputs produce identical decisions. `status: selected`
+includes `selectedProviderId` and `selectionSource`; `status: unroutable` is a
+normal result when no candidate is eligible and has neither field. Both include
+schema version, Task/Agent IDs, required capabilities, optional matched rule ID,
+and ordered considered-provider records with eligibility, selected state, and
+stable rejection codes. Eligible unselected candidates have no rejection
+reasons. Decisions contain only JSON data, never adapters, Task/Agent payloads,
+executable objects, or configuration secrets. Inputs are not mutated.
+
+See the [README example policy](README.md#deterministic-provider-routing).
+TASK-008 may consume a decision and runtime candidate map to execute exactly the
+selected adapter. That orchestration is not implemented by Router v1.
 
 ## Implemented Comparison Flow
 
@@ -70,8 +146,9 @@ per requested participant and currently has no timeout or cancellation policy.
 
 ## Core
 
-- **Task Router** will choose an eligible agent/model route from task
-  requirements, policy, and registry capabilities.
+- **Task Router** selects an eligible configured provider from explicit
+  requirements and policy. Agent/model selection and registry integration remain
+  planned.
 - **Execution Engine** will run an approved route and normalize provider output.
 - **Evaluation Engine** will review results independently using deterministic
   checks where possible and model-based review only when justified.
