@@ -5,6 +5,9 @@
   "license": "MIT",
   "type": "module",
   "private": false,
+  "bin": {
+    "vornariq": "./dist/cli.js"
+  },
   "engines": {
     "node": ">=22.0.0"
   },

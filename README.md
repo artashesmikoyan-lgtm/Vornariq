@@ -5,7 +5,8 @@
 > **Status: PRE-ALPHA.** This repository currently provides the project
 > foundation, provider-neutral TypeScript contracts, and local Codex and Gemini
 > CLI adapters, a sequential comparison harness, and deterministic provider
-> routing with single-provider execution. Evaluation is not implemented yet.
+> routing with single-provider execution and the `vornariq run` CLI. Evaluation
+> is not implemented yet.
 
 ## What is Vornariq?
 
@@ -41,7 +42,8 @@ open-source repository, initial core contracts, and local Codex CLI provider; M3
 adds the shared provider conformance harness, read-only Gemini CLI provider, and
 first multi-provider comparison primitive. M4 adds explicit, rule-based provider
 selection. TASK-008 connects routing to exactly one provider execution. An
-evaluator and the CLI remain planned; this is not a complete product MVP.
+evaluator remains planned; TASK-009 adds the CLI. This is not a complete product
+MVP.
 
 ## Planned Architecture
 
@@ -72,8 +74,68 @@ Prerequisites: Node.js 22 or newer and pnpm 11.19.0.
 
 ```sh
 pnpm install
-pnpm check
+pnpm build
+node dist/cli.js --help
+node dist/cli.js --version
 ```
+
+To execute a task, first configure/authenticate your local Codex CLI, then run:
+
+```sh
+node dist/cli.js run "Review this repository architecture" --require local-repository-read
+```
+
+This invokes a real provider and may consume account quota. Automated tests and
+help/version commands require no provider installation, network, or model calls.
+The package declares a `vornariq` binary; once installed from a local package or
+a future published release, the equivalent command is:
+
+```sh
+vornariq run "Review this repository architecture" --require local-repository-read
+```
+
+This repository is PRE-ALPHA; these examples do not imply npm publication.
+
+### CLI options and security
+
+- `--require <capability>` is repeatable. Identifiers remain open strings;
+  duplicates are removed in first-seen order. `text-output` is always required
+  by this command. Objective text never implies requirements or permissions.
+- `--providers <list>` selects candidates in order, e.g. `gemini,codex` or
+  `codex,gemini`. Default: `codex`. Gemini is opt-in pending live compatibility
+  validation. Unknown, empty, and duplicate provider IDs are errors.
+- `--cwd <path>` selects an existing directory, defaulting to the current
+  directory. Relative paths resolve against the caller's current directory; a
+  Git repository is not required by the CLI.
+- `--codex-workspace-write` explicitly allows Codex to modify files in the
+  selected workspace. **Codex defaults to read-only.** A requirement such as
+  `--require local-repository-write` does **not** grant permission. Without the
+  flag, a write requirement is unroutable. Gemini remains read-only.
+- `--json` prints exactly the durable orchestration result to stdout, including
+  unroutable and provider-failure outcomes. Configuration/infrastructure errors
+  instead use stderr and leave stdout empty.
+- `--help`, `run --help`, and `--version` do not execute providers.
+
+Quote the objective as one argument. Options take separate values, not `=`
+syntax. Only `--require` may repeat; use `--` before a dash-prefixed objective.
+The write grant requires Codex in the provider list. Granting write permission
+does not implicitly add a write requirement.
+
+```sh
+node dist/cli.js run "Update the tests" --require local-repository-write --codex-workspace-write
+node dist/cli.js run "Review auth" --providers gemini,codex --require local-repository-read --json
+```
+
+There is no retry or fallback if the selected provider fails or is unavailable.
+
+| Exit code | Meaning                                                           |
+| --------- | ----------------------------------------------------------------- |
+| 0         | Provider succeeded, or help/version displayed                     |
+| 1         | CLI configuration or orchestration infrastructure error           |
+| 2         | Unroutable; no provider executed                                  |
+| 3         | Provider did not succeed: failed, cancelled, or incomplete result |
+
+### Library entry point
 
 Runtime exports include project identity, provider adapters, comparison,
 routing, and routed execution; core contracts are exported as TypeScript types:

@@ -49,10 +49,20 @@ Unroutable decisions execute nothing; provider failures and sanitized exceptions
 never trigger fallback or retry. This does not mark the entire MVP complete. The
 Gemini real CLI smoke remains a public v0.1 release gate under M3.
 
-## Next task — TASK-009: Router/Orchestrator CLI command
+## TASK-009 — Router/Orchestrator CLI command (complete)
 
-Expose routed execution through `vornariq run` with explicit `--require`
-capabilities. The CLI is not implemented in TASK-008.
+`vornariq run` exposes existing routed execution with explicit requirements,
+ordered provider selection, working-directory validation, human/JSON output, and
+stable exit codes. Codex is read-only by default; write access requires an
+explicit grant. Gemini remains opt-in. Packaging and built help/version smoke
+checks do not establish live provider compatibility or imply publication.
+
+## Next task — TASK-010: Real local E2E validation and provider diagnostics
+
+Validate approved local provider execution and design provider diagnostics /
+`vornariq doctor`. Real model smoke requires explicit resource approval. The
+Gemini public-release gate above remains open. TASK-009 does not implement
+doctor or install Gemini.
 
 ## M5 — Agent Registry
 

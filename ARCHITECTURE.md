@@ -181,6 +181,50 @@ requirements from natural language or escalate permissions. Effective capability
 declarations remain the caller's trust boundary, and adapters arrive already
 configured. Timeout and cancellation behavior remain with the existing adapters.
 
+## Implemented CLI (TASK-009)
+
+`src/cli.ts` is the Node-shebang executable exposed by the package `bin` mapping
+to `dist/cli.js`. npm/pnpm installations generate platform command shims. It
+delegates to CLI command logic and sets `process.exitCode`, without an immediate
+`process.exit` that could truncate output.
+
+```text
+CLI arguments → Task + built-in CLI Agent + explicit requirements
+             → RouteAndExecuteOrchestrator → RuleBasedRouter
+             → selected configured ProviderAdapter → ExecutionResult → output
+```
+
+The parser supports only `run`, help, and version. It validates the objective,
+option values, provider IDs, and duplicate options before constructing adapters.
+Requirements are deduplicated with an explicit `text-output` command invariant;
+there is no natural-language inference. The CLI resolves and validates one
+working directory before construction. Node's randomUUID supplies a Task ID and
+a shared routing/orchestration ID; routing itself remains deterministic.
+
+Only the CLI provider factory knows concrete provider names. Codex is the
+temporary pre-release default and uses read-only sandboxing. The explicit
+`--codex-workspace-write` flag controls both its configuration and effective
+write capability; a write requirement cannot enable permission. Explicitly
+selected Gemini remains read-only with its existing approval behavior. Both
+candidates declare text output, repository read, and structured execution
+events. Caller provider order becomes candidate order and policy default order,
+with no rules or hidden preferences. Existing router/orchestrator code is
+unchanged.
+
+Human output shows the provider and final message, sanitized failure
+code/message, or useful rejection facts. JSON mode writes only the durable
+result to stdout; configuration/infrastructure errors produce a safe stderr
+message. Error output does not include raw exceptions or process diagnostics.
+Provider-returned messages retain the existing adapter sanitization boundary.
+Exit codes are 0 success, 1 configuration/infrastructure error, 2 unroutable,
+and 3 unsuccessful provider result (including cancellation or incomplete state).
+
+Command tests inject IO and provider factories, or intercept the existing
+process runner seams beneath real adapters. Help/version never construct
+candidates. There are no config files, new dependencies, dynamic provider
+discovery, retries, fallback, comparison commands, or implicit model calls
+during validation.
+
 ## Implemented Comparison Flow
 
 ```text

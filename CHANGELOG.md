@@ -6,6 +6,14 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- `vornariq run` executable reusing routed execution, with explicit
+  capabilities, ordered provider selection, cwd validation, human/JSON output,
+  and exit codes.
+- Read-only Codex default with explicit workspace-write opt-in, and read-only
+  Gemini available only through an explicit provider list.
+- CLI parsing, security, output, and integration tests using fake process seams;
+  dependency-free help/version and local CLI quick-start documentation.
+
 - Provider-neutral RouteAndExecuteOrchestrator connecting deterministic routing
   to exactly one selected adapter, with preserved routing/execution evidence,
   deterministic execution IDs, and injectable orchestration timestamps.
