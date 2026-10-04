@@ -57,12 +57,29 @@ stable exit codes. Codex is read-only by default; write access requires an
 explicit grant. Gemini remains opt-in. Packaging and built help/version smoke
 checks do not establish live provider compatibility or imply publication.
 
-## Next task — TASK-010: Real local E2E validation and provider diagnostics
+## TASK-010 — Provider Doctor and Live E2E Gate (complete)
 
-Validate approved local provider execution and design provider diagnostics /
-`vornariq doctor`. Real model smoke requires explicit resource approval. The
-Gemini public-release gate above remains open. TASK-009 does not implement
-doctor or install Gemini.
+`vornariq doctor` checks local CLI availability and features without model
+usage. Explicit `--live codex|gemini` supports one read-only smoke through
+production orchestration, tested only with fakes during TASK-010. Reports
+describe the current invocation; they do not persist gate history.
+
+## Pre-v0.1 live release gates
+
+- [ ] Codex CLI compatibility verified in the release environment
+- [ ] Codex real read-only E2E passed
+- [ ] Gemini CLI installed
+- [ ] Gemini required flags verified
+- [ ] Gemini real read-only E2E passed
+
+Help/fixture validation is not live E2E evidence. No live gate was marked passed
+in TASK-010, and Gemini was not installed.
+
+## Next task — TASK-011: Explicit real provider E2E validation
+
+After separate resource approval, perform real Codex read-only E2E, then
+install/verify Gemini CLI and perform Gemini read-only E2E. TASK-010 does not
+perform this work.
 
 ## M5 — Agent Registry
 

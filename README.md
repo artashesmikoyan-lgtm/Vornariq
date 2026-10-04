@@ -135,6 +135,49 @@ There is no retry or fallback if the selected provider fails or is unavailable.
 | 2         | Unroutable; no provider executed                                  |
 | 3         | Provider did not succeed: failed, cancelled, or incomplete result |
 
+### Provider diagnostics and live E2E
+
+```sh
+node dist/cli.js doctor
+node dist/cli.js doctor --json
+node dist/cli.js doctor --help
+```
+
+Installed-package equivalent: `vornariq doctor`. Default doctor is free local
+diagnostics only: Node/platform detection and pnpm, Git, Codex, and Gemini
+version/help probes. It makes no model/API calls, reads no credentials, installs
+nothing, and stores no history. It reports cwd and bounded versions, but never
+prints PATH, environment variables, raw help, stderr, or exceptions.
+
+`ready` means required CLI features were observed, not authentication or E2E
+success. Other statuses are `warning`, `unavailable`, `incompatible`, and
+`unverified`. Authentication is `not-tested`; E2E starts `unverified` on every
+invocation. Missing optional Gemini and pnpm/Git issues warn without failing an
+otherwise compatible default Codex check. Unavailable/incompatible/unverified
+required providers exit 2; CLI/internal errors exit 1; compatible checks exit 0.
+
+These commands are **explicit opt-ins that consume provider/account resources**:
+
+```sh
+vornariq doctor --live codex
+vornariq doctor --live gemini --json
+```
+
+Each performs at most one read-only request through the existing orchestrator,
+after checking the selected provider's CLI interface. It requests exactly
+`Vornariq Codex E2E OK` or `Vornariq Gemini E2E OK`, instructs the provider not
+to use tools, and verifies the response. Codex stays read-only; Gemini retains
+default approval mode. There is no retry, fallback, second-provider execution,
+or installation. Failed/incorrect responses exit 3; unavailable/incompatible
+providers exit 2 without a request. Reports include factual duration, execution
+status, and fixed safe error codes, not provider output or raw diagnostics.
+
+Live success applies only to the current report; it is not persisted. JSON mode
+outputs one report even for ordinary probe failures. Help checks cannot prove
+stream protocol or authentication behavior. No actual live model smoke was run
+during TASK-010. See the
+[pre-v0.1 checklist](ROADMAP.md#pre-v01-live-release-gates).
+
 ### Library entry point
 
 Runtime exports include project identity, provider adapters, comparison,

@@ -194,12 +194,13 @@ CLI arguments → Task + built-in CLI Agent + explicit requirements
              → selected configured ProviderAdapter → ExecutionResult → output
 ```
 
-The parser supports only `run`, help, and version. It validates the objective,
-option values, provider IDs, and duplicate options before constructing adapters.
-Requirements are deduplicated with an explicit `text-output` command invariant;
-there is no natural-language inference. The CLI resolves and validates one
-working directory before construction. Node's randomUUID supplies a Task ID and
-a shared routing/orchestration ID; routing itself remains deterministic.
+The parser supports `run`, `doctor`, help, and version. It validates the
+objective, option values, provider IDs, and duplicate options before
+constructing adapters. Requirements are deduplicated with an explicit
+`text-output` command invariant; there is no natural-language inference. The CLI
+resolves and validates one working directory before construction. Node's
+randomUUID supplies a Task ID and a shared routing/orchestration ID; routing
+itself remains deterministic.
 
 Only the CLI provider factory knows concrete provider names. Codex is the
 temporary pre-release default and uses read-only sandboxing. The explicit
@@ -224,6 +225,45 @@ process runner seams beneath real adapters. Help/version never construct
 candidates. There are no config files, new dependencies, dynamic provider
 discovery, retries, fallback, comparison commands, or implicit model calls
 during validation.
+
+## Provider Doctor and Live Gate (TASK-010)
+
+The CLI delegates diagnostics to `src/doctor`. A small data table defines help
+commands and required features. Default probes are pnpm/Git version,
+`codex --version`, `codex exec --help`, `gemini --version`, and `gemini --help`.
+Node/platform come from the running process. No adapter is constructed/executed
+on this path, and no credential files are inspected.
+
+Codex requires exec, JSON, sandbox, and cwd flags; stdin support is reported
+when detectable. Gemini requires prompt, output-format, stream-json, and
+approval-mode; sandbox availability is optional. Versions are bounded and
+character-checked, not compared to a pinned version. This is help-text evidence,
+not live protocol verification. Provider statuses distinguish ready, warning,
+unavailable, incompatible, and unverified; authentication remains not-tested.
+
+Probes use spawn with shell false, closed stdin, hidden Windows windows, a
+15-second timeout, and a combined 128 KiB stdout/stderr limit. Only successful
+stdout is inspected; stderr/raw exceptions are discarded. On Windows, PATH
+lookup resolves native executables or recognized Node cmd launchers directly to
+Node. Shim text is never shell-evaluated; unsupported wrappers remain
+unverified. Only launcher files are inspected, not provider configuration or
+credentials. PATH is used for lookup, never reported.
+
+DoctorReport contains JSON environment/provider facts and invocation-only gates.
+Default Codex incompatibility/unavailability/unverified checks exit 2; optional
+Gemini and pnpm/Git issues warn. Explicit live selection makes that provider
+required. Unsupported Node produces an environment error. Internal/CLI errors
+exit 1. E2E is always initially unverified.
+
+Only explicit `--live codex|gemini` constructs a read-only candidate via the
+existing factory and calls RouteAndExecuteOrchestrator once. Failed
+compatibility checks prevent execution. The task requests a fixed marker and
+prohibits tool use; success requires the matching final response. Failures exit
+3 without retry/fallback. Reports expose duration, execution status, and safe
+fixed error codes, never raw execution output or metadata. No installation,
+persistence, credential management, or monitoring is introduced. Automated tests
+use fake processes/adapters; TASK-010 runs only free diagnostics on the local
+environment.
 
 ## Implemented Comparison Flow
 

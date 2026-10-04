@@ -6,12 +6,14 @@ import { RouteAndExecuteOrchestrator } from "../orchestration/index.js";
 import { CliError, parseArgs } from "./cli-args.js";
 import { help, humanOutput, resultExitCode } from "./cli-output.js";
 import { createCandidates } from "./provider-factory.js";
+import { diagnose, doctorHelp, doctorOutput } from "../doctor/doctor.js";
 
 export interface CliDependencies {
   readonly stdout: (text: string) => void;
   readonly stderr: (text: string) => void;
   readonly cwd: () => string;
   readonly createCandidates: typeof createCandidates;
+  readonly diagnose: typeof diagnose;
 }
 
 const defaults: CliDependencies = {
@@ -23,6 +25,7 @@ const defaults: CliDependencies = {
   },
   cwd: () => process.cwd(),
   createCandidates,
+  diagnose,
 };
 
 /** No process exit here: the executable owns exitCode; tests inject IO/providers. */
@@ -33,6 +36,21 @@ export async function runCli(
   const dependencies = { ...defaults, ...overrides };
   try {
     const command = parseArgs(args);
+    if (command.command === "doctor-help") {
+      dependencies.stdout(doctorHelp);
+      return 0;
+    }
+    if (command.command === "doctor") {
+      const { report, exitCode } = await dependencies.diagnose(
+        dependencies.cwd(),
+        command.live,
+        { createCandidates: dependencies.createCandidates },
+      );
+      dependencies.stdout(
+        command.json ? `${JSON.stringify(report)}\n` : doctorOutput(report),
+      );
+      return exitCode;
+    }
     if (command.command === "help") {
       dependencies.stdout(help);
       return 0;

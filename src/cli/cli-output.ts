@@ -4,6 +4,10 @@ export const help = `Usage: vornariq run <objective> [options]
        vornariq --help
        vornariq --version
        vornariq run --help
+       vornariq doctor [--json] [--live codex|gemini]
+
+doctor: free local diagnostics by default. --live explicitly consumes provider resources.
+See vornariq doctor --help.
 
 --require <capability>       Repeatable explicit requirement; text-output is always included.
 --providers <list>           Ordered codex,gemini list; default: codex (pre-release).

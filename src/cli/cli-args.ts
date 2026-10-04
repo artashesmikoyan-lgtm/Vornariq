@@ -14,9 +14,36 @@ export interface RunOptions {
 export type CliCommand =
   | { readonly command: "help" }
   | { readonly command: "version" }
+  | { readonly command: "doctor-help" }
+  | {
+      readonly command: "doctor";
+      readonly json: boolean;
+      readonly live?: CliProviderId;
+    }
   | { readonly command: "run"; readonly options: RunOptions };
 
 export function parseArgs(args: readonly string[]): CliCommand {
+  if (args[0] === "doctor") {
+    if (args.length === 2 && args[1] === "--help")
+      return { command: "doctor-help" };
+    let json = false;
+    let live: CliProviderId | undefined;
+    for (let index = 1; index < args.length; index += 1) {
+      if (args[index] === "--json" && !json) {
+        json = true;
+        continue;
+      }
+      if (args[index] === "--live" && live === undefined) {
+        const provider = args[++index];
+        if (provider !== "codex" && provider !== "gemini")
+          throw new CliError("--live requires codex or gemini.");
+        live = provider;
+        continue;
+      }
+      throw new CliError("Invalid doctor option. See doctor --help.");
+    }
+    return { command: "doctor", json, ...(live === undefined ? {} : { live }) };
+  }
   if (
     (args.length === 1 && args[0] === "--help") ||
     (args.length === 2 && args[0] === "run" && args[1] === "--help")

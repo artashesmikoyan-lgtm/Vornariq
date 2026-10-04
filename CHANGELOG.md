@@ -6,6 +6,13 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Local `vornariq doctor` environment/provider diagnostics, feature-based CLI
+  checks, JSON/human output, and visible unverified E2E gates.
+- Explicit single-provider read-only `doctor --live` smoke paths with response
+  verification, no retry/fallback, and safe invocation-only reports.
+- Bounded shell-free probes and fake-only tests; no real model usage or provider
+  installation during TASK-010.
+
 - `vornariq run` executable reusing routed execution, with explicit
   capabilities, ordered provider selection, cwd validation, human/JSON output,
   and exit codes.
