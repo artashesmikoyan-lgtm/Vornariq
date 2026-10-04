@@ -1,0 +1,26 @@
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+.pnpm-store/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+.npmrc.local
+*.pem
+*.key
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+benchmarks/results/
+benchmarks/tmp/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
