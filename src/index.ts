@@ -58,3 +58,16 @@ export type {
   CodexProviderOptions,
   CodexSandboxMode,
 } from "./providers/codex/index.js";
+
+export {
+  geminiProvider,
+  GeminiProviderAdapter,
+  NodeGeminiProcessRunner,
+} from "./providers/gemini/index.js";
+export type {
+  GeminiClock,
+  GeminiProcessRequest,
+  GeminiProcessResult,
+  GeminiProcessRunner,
+  GeminiProviderOptions,
+} from "./providers/gemini/index.js";

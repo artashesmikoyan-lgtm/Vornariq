@@ -24,8 +24,8 @@ contracts.
 Validate the provider boundary with additional adapters:
 
 - [x] Provider Conformance Harness
-- [ ] Gemini CLI Provider (next)
-- [ ] OpenRouter Provider (later)
+- [x] Gemini CLI Provider
+- [ ] OpenRouter Provider (next)
 
 ## M4 — Router v1
 

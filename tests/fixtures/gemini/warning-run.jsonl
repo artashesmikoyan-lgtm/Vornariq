@@ -1,0 +1,6 @@
+{"type":"init","timestamp":"2026-10-04T12:00:00.000Z","session_id":"session-test-003","model":"gemini-test-model"}
+{"type":"tool_use","timestamp":"2026-10-04T12:00:00.100Z","tool_name":"write_file","tool_id":"tool-test-denied","parameters":{"path":"synthetic.txt","content":"must not be retained"}}
+{"type":"error","timestamp":"2026-10-04T12:00:00.200Z","severity":"warning","code":"POLICY_DENIED","message":"Agent execution blocked by the default approval policy."}
+{"type":"tool_result","timestamp":"2026-10-04T12:00:00.300Z","tool_id":"tool-test-denied","status":"error","error":{"type":"POLICY_DENIED","message":"Write was not executed."}}
+{"type":"message","timestamp":"2026-10-04T12:00:00.400Z","role":"assistant","content":"The requested write was not performed.","delta":true}
+{"type":"result","timestamp":"2026-10-04T12:00:00.500Z","status":"success","stats":{"total_tokens":40,"input_tokens":30,"output_tokens":10,"duration_ms":500,"tool_calls":1}}

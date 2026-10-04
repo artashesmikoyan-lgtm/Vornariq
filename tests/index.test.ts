@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { codexProvider, CodexProviderAdapter, project } from "../src/index.js";
+import {
+  codexProvider,
+  CodexProviderAdapter,
+  geminiProvider,
+  GeminiProviderAdapter,
+  NodeGeminiProcessRunner,
+  project,
+} from "../src/index.js";
 import type {
   Agent,
   EvaluationResult,
@@ -50,5 +57,11 @@ describe("project metadata", () => {
   it("exports the Codex provider from the package entry point", () => {
     expect(codexProvider.id).toBe("codex");
     expect(CodexProviderAdapter).toBeTypeOf("function");
+  });
+
+  it("exports the Gemini provider from the package entry point", () => {
+    expect(geminiProvider.id).toBe("gemini");
+    expect(GeminiProviderAdapter).toBeTypeOf("function");
+    expect(NodeGeminiProcessRunner).toBeTypeOf("function");
   });
 });

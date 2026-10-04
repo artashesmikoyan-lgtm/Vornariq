@@ -1,9 +1,8 @@
 # Target Architecture
 
-This document separates Vornariq's implemented contract layer from its target
-runtime architecture. M1 implements only the initial provider-neutral core
-contracts; routing, provider adapters, execution, and evaluation behavior remain
-planned.
+This document separates Vornariq's implemented contracts and provider adapters
+from its target runtime architecture. Routing, provider selection, execution
+orchestration, and evaluation behavior remain planned.
 
 ## Principles
 
@@ -61,10 +60,13 @@ or execution behavior, and TASK-001 does not implement them.
 
 ## Providers
 
-Planned adapters include:
+Implemented adapters include:
 
 - Codex;
-- Gemini;
+- Gemini.
+
+Planned adapters include:
+
 - OpenRouter; and
 - local model providers.
 
@@ -97,6 +99,35 @@ Codex CLI owns authentication and user configuration. Vornariq does not read
 Codex authentication files, accept API keys for this adapter, bypass local
 rules, or depend directly on the OpenAI API. Session resume, output schemas,
 routing, and public streaming APIs remain out of scope.
+
+### Initial Gemini CLI Transport (Implemented in M3)
+
+The second provider adapter invokes the locally installed Gemini CLI in headless
+mode with `--approval-mode default --output-format stream-json`. A small
+deterministic instruction is passed with `-p`; the complete Task + Agent prompt
+is written directly to stdin to avoid shell interpolation and Windows
+command-line length limits.
+
+The adapter consumes newline-delimited stream events, retains only assistant
+message content, requires both a successful process exit and terminal result,
+and maps reported token usage plus locally measured duration. Session and model
+identifiers from the init event may appear as provider-specific JSON-safe
+metadata. Tool arguments, tool results, raw stderr, and internal reasoning do
+not become public output.
+
+TASK-005 intentionally exposes Gemini as read-only. In headless mode, the
+`default` approval policy denies tool operations that would otherwise require
+interactive confirmation. Vornariq does not default to `plan`, because current
+non-interactive Plan Mode may transition into YOLO when implementation begins.
+It also does not pass YOLO, auto-edit, skip-trust, or raw-output flags. An
+optional `sandbox: true` adds `--sandbox` for installations with a configured
+sandbox runtime; sandboxing is not assumed to be universally available.
+
+Gemini CLI owns authentication, configuration, folder trust, and its inherited
+process environment. Vornariq does not read Gemini credential files, accept or
+persist Google API keys, change user settings, or install the CLI. Model
+selection, session resume, write mode, and direct Google API transports remain
+out of scope.
 
 ### Provider Conformance Harness (Implemented)
 

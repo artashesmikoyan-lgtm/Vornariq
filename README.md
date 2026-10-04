@@ -3,8 +3,8 @@
 **Intelligent orchestration for coding agents.**
 
 > **Status: PRE-ALPHA.** This repository currently provides the project
-> foundation, provider-neutral TypeScript contracts, and an initial local Codex
-> CLI adapter. Routing, additional providers, and evaluation behavior are not
+> foundation, provider-neutral TypeScript contracts, and local Codex and Gemini
+> CLI adapters. Routing, provider selection, and evaluation behavior are not
 > implemented yet.
 
 ## What is Vornariq?
@@ -14,9 +14,9 @@ It is intended to complement coding agents—not replace them—by providing a
 provider-neutral place to route tasks, execute work, review results
 independently, and compare quality, cost, and latency.
 
-Codex CLI is the first implemented provider boundary. The target ecosystem also
-includes Gemini, OpenRouter, local providers, specialized agents, controlled
-skills, MCP tools, and reproducible evaluation.
+Codex CLI and Gemini CLI are the first two implemented provider boundaries. The
+target ecosystem also includes OpenRouter, local providers, specialized agents,
+controlled skills, MCP tools, and reproducible evaluation.
 
 ## Why Vornariq?
 
@@ -37,8 +37,9 @@ framework, or replacement for Codex.
 ## Status
 
 The project is in **PRE-ALPHA**. Milestones M0 through M2 establish the
-open-source repository, initial core contracts, and local Codex CLI provider.
-The package does not include an agent router, additional providers, an execution
+open-source repository, initial core contracts, and local Codex CLI provider; M3
+adds the shared provider conformance harness and read-only Gemini CLI provider.
+The package does not include an agent router, provider selection, an execution
 engine, or an evaluator.
 
 ## Planned Architecture
@@ -99,6 +100,25 @@ const provider = new CodexProviderAdapter({
 The sandbox defaults to `read-only`. Callers must explicitly select
 `workspace-write` when a task needs repository changes. General routing and
 session resume are not implemented.
+
+## Gemini CLI Provider
+
+The second provider invokes a locally installed and authenticated Gemini CLI in
+headless `stream-json` mode. Vornariq sends the full deterministic task prompt
+over stdin and does not manage Google credentials.
+
+```ts
+import { GeminiProviderAdapter } from "vornariq";
+
+const provider = new GeminiProviderAdapter({
+  workingDirectory: process.cwd(),
+});
+```
+
+This adapter is read-only. It explicitly uses Gemini's non-interactive
+`approval-mode default`; it does not enable YOLO, auto-edit, skip-trust, raw
+output, or Plan Mode. Optional `sandbox: true` is available only when the local
+Gemini installation has a working sandbox runtime.
 
 ## Development
 

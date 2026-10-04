@@ -6,6 +6,12 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- Read-only Gemini CLI provider using headless `stream-json`, stdin prompt
+  delivery, default approval policy, bounded process I/O, and sanitized
+  provider-neutral result mapping.
+- Deterministic Gemini fixtures and tests for command safety, prompt generation,
+  stream parsing, failures, usage, process cleanup, public exports, and shared
+  provider conformance.
 - Reusable provider conformance harness covering portable success and failure
   results, JSON safety, immutable inputs, timestamps, metrics, and secret
   sanitization.
