@@ -55,6 +55,8 @@ and pnpm 11.19.0. The runtime engine remains Node.js >=22; local validation used
 24.19.0. Linux CI is configured but has not run publicly; macOS is unverified.
 
 ```sh
+git clone https://github.com/artashesmikoyan-lgtm/Vornariq.git
+cd Vornariq
 pnpm install
 pnpm build
 node dist/cli.js --help

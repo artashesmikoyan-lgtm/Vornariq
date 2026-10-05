@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "description": "Intelligent orchestration for coding agents.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artashesmikoyan-lgtm/Vornariq.git"
+  },
+  "bugs": {
+    "url": "https://github.com/artashesmikoyan-lgtm/Vornariq/issues"
+  },
+  "homepage": "https://github.com/artashesmikoyan-lgtm/Vornariq#readme",
   "keywords": [
     "coding-agents",
     "orchestration",
