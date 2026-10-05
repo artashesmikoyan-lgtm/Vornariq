@@ -5,7 +5,7 @@ local-first, provider-neutral direction are welcome.
 
 ## Prerequisites
 
-- Node.js 22 or newer
+- Node.js 22.13+ on the 22 LTS line, or Node.js 24 LTS, for development tooling
 - pnpm 11.19.0 (the version declared in `package.json`)
 - Git
 
@@ -47,3 +47,8 @@ Keep changes focused and explain their motivation. Add tests for behavior
 changes, update relevant documentation, and make `pnpm check` pass. Describe
 security and documentation impact explicitly. Avoid unrelated refactors and new
 dependencies unless the change requires them.
+
+Provider changes must preserve the provider-neutral contracts and pass the
+offline conformance harness. Automated tests must never call real Codex, Gemini,
+or another model service; use fake process seams and synthetic fixtures. Live
+checks require separate explicit approval and are not part of `pnpm check`.

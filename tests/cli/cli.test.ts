@@ -71,6 +71,14 @@ describe("argument parsing", () => {
     ["run", "x", "--json", "--json"],
     ["run", "x", "--wat"],
     ["run", "x", "--providers", "gemini", "--codex-workspace-write"],
+    ["run", "x", "--codex-workspace-write"],
+    [
+      "run",
+      "x",
+      "--require",
+      "local-repository-read",
+      "--codex-workspace-write",
+    ],
   ])(
     "rejects invalid arguments %j before construction or execution",
     async (...args) => {
@@ -118,6 +126,59 @@ describe("argument parsing", () => {
 });
 
 describe("CLI production flow with fake process runners", () => {
+  it.each([
+    ["codex", false],
+    ["codex", true],
+    ["gemini", false],
+    ["gemini", true],
+  ] as const)(
+    "does not expose provider-controlled failure diagnostics (%s, json=%s)",
+    async (provider, json) => {
+      const marker = "synthetic-sensitive-diagnostic";
+      const raw = `${marker}\n at internal (C:\\private\\fixture.js:1)`;
+      if (provider === "codex")
+        codex = new FakeCodexProcessRunner({
+          stdout: JSON.stringify({
+            type: "turn.failed",
+            error: { code: raw, message: raw },
+          }),
+          result: { exitCode: 1, stderr: raw },
+        });
+      else
+        gemini = new FakeGeminiProcessRunner({
+          stdout: JSON.stringify({
+            type: "error",
+            severity: "error",
+            code: raw,
+            message: raw,
+          }),
+          result: { exitCode: 1, stderr: raw },
+        });
+      const result = await invoke([
+        "run",
+        "Review",
+        "--providers",
+        provider,
+        ...(json ? ["--json"] : []),
+      ]);
+      expect(result.code).toBe(3);
+      expect(result.err).toBe("");
+      expect(result.out).not.toContain(marker);
+      expect(result.out).not.toContain("fixture.js");
+      expect(result.out).not.toContain("providerCode");
+      const code = `${provider.toUpperCase()}_TURN_FAILED`;
+      if (json)
+        expect(JSON.parse(result.out)).toMatchObject({
+          executionResult: {
+            status: "failed",
+            error: { code, retryable: false },
+          },
+        });
+      else expect(result.out).toContain(code);
+      expect(codex.requests.length + gemini.requests.length).toBe(1);
+    },
+  );
+
   it.each([["--help"], ["run", "--help"], ["--version"]])(
     "serves %j without providers",
     async (...args) => {

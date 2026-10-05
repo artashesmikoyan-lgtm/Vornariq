@@ -1,5 +1,6 @@
 # Examples
 
-This directory will contain small, runnable examples once Vornariq has stable
-core contracts. Examples must use real public APIs and must not imply that
-planned routing or provider behavior already exists.
+Current CLI and library examples are in the root [README](../README.md). Library
+fragments require the caller's Task, Agent, and configured adapters. Real
+provider execution consumes account resources; automated examples/tests must use
+fakes. No standalone example application is shipped yet.

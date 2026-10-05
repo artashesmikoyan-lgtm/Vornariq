@@ -192,7 +192,6 @@ describe("Gemini provider adapter", () => {
         code: "GEMINI_TURN_FAILED",
         details: {
           eventType: "error_event",
-          providerCode: "TURN_FAILED",
         },
       },
       metadata: {

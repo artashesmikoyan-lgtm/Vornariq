@@ -5,9 +5,9 @@ provider, parser, routing candidate, or Doctor integration was implemented.
 Model invocations: Antigravity 0, Codex 0, Gemini 0.
 
 Subsequent TASK-013 decision: **SECURITY_BLOCKED**. The
-[read-only security gate](ANTIGRAVITY_SECURITY_GATE.md) supersedes this conditional
-architecture recommendation for repository execution. No safe runtime profile
-has been established.
+[read-only security gate](ANTIGRAVITY_SECURITY_GATE.md) supersedes this
+conditional architecture recommendation for repository execution. No safe
+runtime profile has been established.
 
 ## 1. Executive conclusion
 
@@ -77,11 +77,11 @@ session. Normal browser authentication may be completed later without a prompt.
 
 ## 6. Windows executable resolution
 
-Direct native executable: `C:\Users\artas\AppData\Local\agy\bin\agy.exe`. No npm
-shim is required. `Get-Command agy` and `where.exe agy` did not resolve it in
-the current inherited environment, even after installation. The installer
-reported that a terminal restart is needed. No manual PATH changes were made.
-Future configuration can use the verified absolute executable path.
+Direct native executable: `%LOCALAPPDATA%\agy\bin\agy.exe`. No npm shim is
+required. `Get-Command agy` and `where.exe agy` did not resolve it in the
+current inherited environment, even after installation. The installer reported
+that a terminal restart is needed. No manual PATH changes were made. Future
+configuration can use the verified absolute executable path.
 
 ## 7. Headless invocation and installed help
 

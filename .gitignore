@@ -11,11 +11,20 @@ coverage/
 .npmrc.local
 *.pem
 *.key
+.codex/
+.gemini/
+.aws/
+auth.json
+oauth_creds.json
+credentials.json
+*.p12
+*.pfx
 
 # Logs and temporary files
 *.log
 *.tmp
 *.temp
+*.tgz
 benchmarks/results/
 benchmarks/tmp/
 

@@ -3,6 +3,13 @@
   "version": "0.0.1",
   "description": "Intelligent orchestration for coding agents.",
   "license": "MIT",
+  "keywords": [
+    "coding-agents",
+    "orchestration",
+    "cli",
+    "codex",
+    "gemini"
+  ],
   "type": "module",
   "private": false,
   "bin": {
@@ -19,7 +26,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

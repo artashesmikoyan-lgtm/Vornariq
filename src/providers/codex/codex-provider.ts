@@ -141,9 +141,6 @@ function mapCodexFailure(
     retryable: false,
     details: {
       eventType: codexFailure.kind,
-      ...(codexFailure.code === undefined
-        ? {}
-        : { providerCode: codexFailure.code }),
     },
   };
 }

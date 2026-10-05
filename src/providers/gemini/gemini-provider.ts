@@ -308,9 +308,6 @@ export class GeminiProviderAdapter implements ProviderAdapter {
         retryable: false,
         details: {
           eventType: parsed.failure?.kind ?? "result_error",
-          ...(parsed.failure?.code === undefined
-            ? {}
-            : { providerCode: parsed.failure.code }),
         },
       };
     }

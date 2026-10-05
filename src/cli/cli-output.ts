@@ -18,8 +18,9 @@ See vornariq doctor --help.
 --version                   Show the package version.
 
 Codex defaults to read-only. Requiring local-repository-write does NOT grant
-write permission; --codex-workspace-write is also required. Gemini is read-only
-and opt-in pending live compatibility validation. No fallback or retries.
+write permission; both --require local-repository-write and
+--codex-workspace-write are required for write execution. Gemini is read-only
+and opt-in; its live authentication path remains unverified. No fallback or retries.
 Quote the objective; use -- before an objective beginning with a dash.
 Only --require is repeatable; duplicate capabilities are deduplicated.
 Exit codes: 0 success, 1 configuration/infrastructure error, 2 unroutable,

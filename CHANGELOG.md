@@ -6,6 +6,13 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Fixed
 
+- Require both an explicit repository-write requirement and Codex write grant
+  before CLI write execution; either alone cannot enable writes.
+- Drop provider-controlled error codes from built-in adapter failure details so
+  protocol diagnostics cannot leak into public JSON output.
+- Correct public provider/platform status, portable research paths, and source
+  development prerequisites; exclude source maps from the published package.
+
 - Gemini execution resolves Windows npm launchers through the same shell-free
   resolver as Doctor, preserving arguments, stdin, and approval settings.
 
@@ -13,6 +20,12 @@ All notable changes to Vornariq will be documented in this file.
   retryable flag without exposing error details or raw process output.
 
 ### Added
+
+- TASK-014 public-repository readiness audit and practical release checklist,
+  retaining version 0.0.1 and PRE-ALPHA status without publication or live
+  calls.
+- Offline regression coverage for write-grant validation and failure-detail
+  sanitization; Windows CI coverage alongside Linux minimum-toolchain coverage.
 
 - TASK-013 Antigravity read-only security gate: SECURITY_BLOCKED pending a
   reproducible Windows isolation boundary; documents evidence limits and future

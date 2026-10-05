@@ -2,75 +2,57 @@
 
 **Intelligent orchestration for coding agents.**
 
-> **Status: PRE-ALPHA.** This repository currently provides the project
-> foundation, provider-neutral TypeScript contracts, and local Codex and Gemini
-> CLI adapters, a sequential comparison harness, and deterministic provider
-> routing with single-provider execution and the `vornariq run` CLI. Evaluation
-> is not implemented yet.
+Vornariq is a local-first, open-source orchestration layer for coding-agent
+providers. **PRE-ALPHA:** experimental, intended for reviewed local workflows.
 
-## What is Vornariq?
+It gives provider differences a common TypeScript interface: explicit capability
+requirements select a configured provider, and the orchestrator executes that
+provider once. Provider authentication stays with the installed CLI.
 
-Vornariq is a local-first orchestration and evaluation layer for coding agents.
-It is intended to complement coding agents—not replace them—by providing a
-provider-neutral place to route tasks, execute work, review results
-independently, and compare quality, cost, and latency.
+## What works today
 
-Codex CLI and Gemini CLI are the first two implemented provider boundaries. The
-target ecosystem also includes OpenRouter, local providers, specialized agents,
-controlled skills, MCP tools, and reproducible evaluation.
+- Provider-neutral Task, Agent, ExecutionResult, and evaluation data contracts.
+- Codex and Gemini CLI adapters with offline provider conformance tests.
+- Deterministic rule-based routing and single-provider execution.
+- Sequential comparison reports, without winner selection or quality scoring.
+- Human/JSON output through `vornariq run` and free `vornariq doctor`
+  diagnostics.
 
-## Why Vornariq?
+There is no evaluation engine, agent registry, MCP integration, persistence,
+benchmark engine, cost optimization, or automatic fallback/retry. Future work
+belongs in [ROADMAP.md](ROADMAP.md).
 
-Coding agents expose different capabilities, costs, and operating models.
-Vornariq aims to make those differences explicit through:
+## Provider status
 
-- task, model, and agent routing;
-- provider-neutral execution;
-- independent verification;
-- reproducible agent benchmarks;
-- quality, cost, and latency comparison;
-- Codex-native workflows; and
-- controlled skills and MCP integration.
+Validation record supplied for TASK-014, dated 2026-10-05; no live call was
+repeated by the release audit. Local validation covers Windows only.
 
-Vornariq is not an LLM, IDE, SaaS product, autonomous company, generic chatbot
-framework, or replacement for Codex.
+| Provider    | Adapter | CLI compatibility | Live E2E                          | Notes                                                                                                     |
+| ----------- | ------- | ----------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Codex       | Yes     | Verified, 0.154.0 | Verified, authenticated read-only | Default provider; Windows validation only.                                                                |
+| Gemini CLI  | Yes     | Verified, 0.62.0  | Not verified                      | Personal OAuth blocked upstream for this use case; API-key/enterprise paths not E2E-verified in Vornariq. |
+| Antigravity | No      | Researched        | N/A                               | Security-blocked; not exposed by the CLI or routing factory.                                              |
 
-## Status
+These are specific validation results, not guarantees for every version or
+platform. Gemini authentication documentation and observed upstream behavior can
+conflict; see the [readiness record](docs/V0_1_READINESS.md) for scope and
+sources. Antigravity research is retained in its
+[security gate](docs/ANTIGRAVITY_SECURITY_GATE.md).
 
-The project is in **PRE-ALPHA**. Milestones M0 through M2 establish the
-open-source repository, initial core contracts, and local Codex CLI provider; M3
-adds the shared provider conformance harness, read-only Gemini CLI provider, and
-first multi-provider comparison primitive. M4 adds explicit, rule-based provider
-selection. TASK-008 connects routing to exactly one provider execution. An
-evaluator remains planned; TASK-009 adds the CLI. This is not a complete product
-MVP.
+## Current architecture
 
-## Planned Architecture
+`CLI → RouteAndExecuteOrchestrator → RuleBasedRouter → selected ProviderAdapter`
 
-The target flow is:
-
-```text
-User Task
-   ↓
-Task Router
-   ↓
-Agent / Model Selection
-   ↓
-Execution
-   ↓
-Independent Review
-   ↓
-Result + Metrics
-```
-
-The planned core separates routing, execution, evaluation, and policy from
-agent, provider, skill, and MCP registries. Codex will be a first-class provider
-without binding the core to Codex. See [ARCHITECTURE.md](ARCHITECTURE.md) for
-the target boundaries; they remain subject to validation in later milestones.
+The orchestrator owns selection and execution. The router does not execute;
+comparison is a separate library operation. Doctor's free probes are separate
+from model execution; explicit live smoke uses the orchestrator. See
+[ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Quick Start
 
-Prerequisites: Node.js 22 or newer and pnpm 11.19.0.
+From a source checkout, use Node.js 22.13+ on the 22 LTS line or Node.js 24 LTS
+and pnpm 11.19.0. The runtime engine remains Node.js >=22; local validation used
+24.19.0. Linux CI is configured but has not run publicly; macOS is unverified.
 
 ```sh
 pnpm install
@@ -102,8 +84,9 @@ This repository is PRE-ALPHA; these examples do not imply npm publication.
   duplicates are removed in first-seen order. `text-output` is always required
   by this command. Objective text never implies requirements or permissions.
 - `--providers <list>` selects candidates in order, e.g. `gemini,codex` or
-  `codex,gemini`. Default: `codex`. Gemini is opt-in pending live compatibility
-  validation. Unknown, empty, and duplicate provider IDs are errors.
+  `codex,gemini`. Default: `codex`. Gemini is opt-in pending live
+  authentication-path validation. Unknown, empty, and duplicate provider IDs are
+  errors.
 - `--cwd <path>` selects an existing directory, defaulting to the current
   directory. Relative paths resolve against the caller's current directory; a
   Git repository is not required by the CLI.
@@ -118,8 +101,11 @@ This repository is PRE-ALPHA; these examples do not imply npm publication.
 
 Quote the objective as one argument. Options take separate values, not `=`
 syntax. Only `--require` may repeat; use `--` before a dash-prefixed objective.
-The write grant requires Codex in the provider list. Granting write permission
-does not implicitly add a write requirement.
+The write grant requires Codex in the provider list and an explicit
+`--require local-repository-write`. Both flags are required; neither alone
+enables write execution. Vornariq delegates enforcement to the provider and does
+not create an independent OS sandbox. Provider settings, customizations, and
+inherited environment remain trust boundaries; see [SECURITY.md](SECURITY.md).
 
 ```sh
 node dist/cli.js run "Update the tests" --require local-repository-write --codex-workspace-write
@@ -174,9 +160,9 @@ status, and fixed safe error codes, not provider output or raw diagnostics.
 
 Live success applies only to the current report; it is not persisted. JSON mode
 outputs one report even for ordinary probe failures. Help checks cannot prove
-stream protocol or authentication behavior. No actual live model smoke was run
-during TASK-010. See the
-[pre-v0.1 checklist](ROADMAP.md#pre-v01-live-release-gates).
+stream protocol or authentication behavior. Historical release evidence is
+recorded above; free Doctor checks do not persist or reproduce it. See the
+[release checklist](docs/RELEASE_CHECKLIST.md).
 
 ### Library entry point
 
@@ -221,10 +207,15 @@ const provider = new GeminiProviderAdapter({
 });
 ```
 
-This adapter is read-only. It explicitly uses Gemini's non-interactive
-`approval-mode default`; it does not enable YOLO, auto-edit, skip-trust, raw
-output, or Plan Mode. Optional `sandbox: true` is available only when the local
-Gemini installation has a working sandbox runtime.
+This adapter exposes read-only operation with no write opt-in. It explicitly
+uses Gemini's non-interactive `approval-mode default`; it does not enable YOLO,
+auto-edit, skip-trust, raw output, or Plan Mode. Optional `sandbox: true` is
+available only when the local Gemini installation has a working sandbox runtime.
+
+Personal Google OAuth is blocked upstream for the validated use case. API-key or
+enterprise authentication is a possible path but has not passed Vornariq live
+E2E. The adapter remains experimental; do not assume a successful login or help
+probe proves model access.
 
 ## Provider Comparison
 

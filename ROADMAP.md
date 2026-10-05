@@ -1,129 +1,54 @@
 # Roadmap
 
-Vornariq is PRE-ALPHA. Milestone scope may change as contracts are validated,
-but the provider-neutral and local-first principles remain durable.
+Vornariq is PRE-ALPHA. Completed milestones describe implemented and
+offline-tested behavior, not production readiness or universal provider
+compatibility.
 
-## M0 — OSS Foundation (complete)
-
-Establish the TypeScript package, repository structure, public documentation,
-quality gates, deterministic baseline test, and CI. No orchestration behavior is
-in scope.
-
-## M1 — Core Contracts (complete)
-
-Validate and implement minimal contracts for tasks, agents, providers, execution
-results, and evaluation results.
-
-## M2 — Codex Provider (complete)
-
-Implement the first provider adapter while preserving provider-neutral core
-contracts.
-
-## M3 — Multi-provider foundation (in progress)
-
-Validate provider-neutral execution across multiple adapters:
-
-- [x] Provider Conformance Harness
-- [x] Gemini CLI Provider implementation
-- [x] Provider Comparison Harness
-- [ ] Gemini real CLI compatibility smoke (public v0.1 release gate)
-
-Before public v0.1, install a supported Gemini CLI, verify its version/help and
-required flags, and run one explicitly approved read-only end-to-end smoke.
-Deterministic fake-process integration tests do not close this gate.
-
-OpenRouter remains a future provider expansion after routing semantics are
-established.
-
-## M4 — Router v1 (complete)
-
-Select configured providers using explicit effective capabilities, eligibility
-filters, and ordered deterministic policy. Decisions are explainable and
-JSON-safe; routing does not execute providers or consume comparison results.
-
-## TASK-008 — Route-and-Execute Orchestrator v1 (complete)
-
-The first complete routed execution flow reuses RuleBasedRouter and executes
-exactly one selected ProviderAdapter from the same runtime candidate list.
-Unroutable decisions execute nothing; provider failures and sanitized exceptions
-never trigger fallback or retry. This does not mark the entire MVP complete. The
-Gemini real CLI smoke remains a public v0.1 release gate under M3.
-
-## TASK-009 — Router/Orchestrator CLI command (complete)
-
-`vornariq run` exposes existing routed execution with explicit requirements,
-ordered provider selection, working-directory validation, human/JSON output, and
-stable exit codes. Codex is read-only by default; write access requires an
-explicit grant. Gemini remains opt-in. Packaging and built help/version smoke
-checks do not establish live provider compatibility or imply publication.
-
-## TASK-010 — Provider Doctor and Live E2E Gate (complete)
-
-`vornariq doctor` checks local CLI availability and features without model
-usage. Explicit `--live codex|gemini` supports one read-only smoke through
-production orchestration, tested only with fakes during TASK-010. Reports
-describe the current invocation; they do not persist gate history.
-
-Failed smoke reports retain sanitized provider failure reasons. Live Codex
-validation remains an open gate; offline diagnostic tests do not close it.
-
-Gemini's Windows npm launcher resolution is covered offline. Live Gemini
-validation still requires successful CLI authentication and an approved smoke.
+| Milestone                      | Status   | Evidence/scope                                                                                          |
+| ------------------------------ | -------- | ------------------------------------------------------------------------------------------------------- |
+| M0 — OSS foundation            | COMPLETE | MIT license, repository guides, TypeScript tooling, CI workflow. Public CI still awaits publication.    |
+| M1 — Core contracts            | COMPLETE | Provider-neutral task, agent, execution, evaluation data contracts and tests.                           |
+| M2 — Codex provider            | COMPLETE | CLI adapter, offline conformance, prior Windows 0.154.0 authenticated read-only E2E.                    |
+| M3 — Multi-provider foundation | COMPLETE | Gemini adapter, conformance suite, sequential comparison report. Gemini live E2E is separately pending. |
+| M4 — Router v1                 | COMPLETE | Deterministic selection without execution or inferred permissions.                                      |
+| M5 — Routed execution CLI      | COMPLETE | TASK-008 orchestrator and TASK-009 CLI; one selected provider, no retry/fallback.                       |
+| M6 — Diagnostics / validation  | COMPLETE | TASK-010 free Doctor, explicit live-smoke support, safe failure reporting; no persisted gate history.   |
+| M7 — Public v0.1               | NEXT     | TASK-014 audit, then separately authorized TASK-015 repository/release preparation.                     |
 
 ## Pre-v0.1 live release gates
 
-TASK-013 classifies Antigravity repository execution as **SECURITY_BLOCKED**.
-See [the read-only security gate](docs/ANTIGRAVITY_SECURITY_GATE.md). A reproducible
-Windows boundary controlling filesystem writes and inherited customizations is
-required before implementation or an approved active denial smoke.
+The TASK-014 validation record reports Codex CLI 0.154.0 compatibility,
+authentication, and read-only E2E passed locally on Windows. The audit does not
+repeat a live invocation. Free Doctor reports remain invocation-only and always
+start with E2E unverified.
 
-TASK-012 assessed the Antigravity architecture as CONDITIONAL_GO. See
-[the security spike](docs/ANTIGRAVITY_PROVIDER_SPIKE.md) for the required
-read-only policy, customization isolation, and timeout safeguards evaluated by
-TASK-013. No Antigravity provider is implemented or enabled.
+Gemini CLI 0.62.0 compatibility and Windows npm launcher support are verified.
+Personal OAuth is blocked upstream for this use case. API-key/enterprise paths
+remain possible but not live-verified in Vornariq. This is a documented
+limitation, not a blocker to publishing the experimental repository.
 
-- [ ] Codex CLI compatibility verified in the release environment
-- [ ] Codex real read-only E2E passed
-- [ ] Gemini CLI installed
-- [ ] Gemini required flags verified
-- [ ] Gemini real read-only E2E passed
+Antigravity integration is **BLOCKED** pending a defensible read-only security
+boundary. There is no production adapter or routing candidate. Preserve the
+[discovery spike](docs/ANTIGRAVITY_PROVIDER_SPIKE.md) and
+[security gate](docs/ANTIGRAVITY_SECURITY_GATE.md) as research, not runtime
+support.
 
-Help/fixture validation is not live E2E evidence. No live gate was marked passed
-in TASK-010, and Gemini was not installed.
+## Release preparation — NEXT
 
-## Next task — TASK-011: Explicit real provider E2E validation
+Use [the readiness handoff](docs/V0_1_READINESS.md) and
+[release checklist](docs/RELEASE_CHECKLIST.md). Keep 0.0.1 during the audit.
+TASK-015 may prepare 0.1.0, configure actual repository metadata, create/push
+the public repository, verify hosted CI, and then tag/release/publish only with
+its own explicit authorization. No release action is implied by this roadmap.
 
-After separate resource approval, perform real Codex read-only E2E, then
-install/verify Gemini CLI and perform Gemini read-only E2E. TASK-010 does not
-perform this work.
+## Future work — FUTURE
 
-## M5 — Agent Registry
+- OpenRouter or local provider expansion after scoped provider/security work.
+- Agent registry; controlled skills and MCP integrations.
+- Independent evaluation and reproducible benchmark suites.
+- GitHub maintainer automation and community validation.
 
-Register specialized agent roles and capabilities without creating a plugin
-marketplace.
-
-## M6 — Evaluation Harness
-
-Run independent and reproducible checks against execution results.
-
-## M7 — Skills + MCP
-
-Introduce controlled skill and MCP registries with explicit permissions.
-
-## M8 — GitHub/Codex Maintainer Automation
-
-Evaluate narrowly scoped maintainer automation after core security boundaries
-are proven.
-
-## M9 — Public v0.1 Release
-
-Prepare a documented pre-1.0 release with supported workflows and upgrade notes.
-
-## M10 — Community Validation
-
-Collect reproducible use cases, failures, and compatibility feedback.
-
-## M11 — Codex for OSS Application Readiness
-
-Assess project maturity, governance, security, and evidence required for an
-application.
+These are directions, not implemented features or commitments. Evaluation data
+contracts and comparison reports do not establish an evaluation or benchmark
+engine. No persistence, UI, new authentication layer, fallback, or automatic
+retries are part of the current release candidate.

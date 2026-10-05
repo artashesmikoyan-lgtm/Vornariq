@@ -1,4 +1,4 @@
-# Target Architecture
+# Architecture
 
 This document separates Vornariq's implemented contracts and provider adapters
 from its target runtime architecture. Deterministic provider selection and
@@ -8,15 +8,15 @@ planned.
 ## Principles
 
 - Local-first operation and no telemetry by default.
-- A provider-neutral core with Codex as the first planned integration.
+- A provider-neutral core with Codex and Gemini CLI adapters.
 - Explicit boundaries between tasks, agents, providers, execution, and
   evaluation.
-- Human-readable configuration and reproducible benchmarks.
+- Explicit capability requirements and deterministic routing policy.
 - Least-privilege tools and credentials kept outside source control.
 - Minimal dependencies and abstractions introduced only when requirements
   justify them.
 
-## Target Flow
+## Future Flow (not implemented)
 
 ```text
 User Task
@@ -205,12 +205,12 @@ itself remains deterministic.
 Only the CLI provider factory knows concrete provider names. Codex is the
 temporary pre-release default and uses read-only sandboxing. The explicit
 `--codex-workspace-write` flag controls both its configuration and effective
-write capability; a write requirement cannot enable permission. Explicitly
-selected Gemini remains read-only with its existing approval behavior. Both
-candidates declare text output, repository read, and structured execution
-events. Caller provider order becomes candidate order and policy default order,
-with no rules or hidden preferences. Existing router/orchestrator code is
-unchanged.
+write capability; a write requirement cannot enable permission. The CLI rejects
+the write flag without an explicit write requirement. Explicitly selected Gemini
+remains read-only with its existing approval behavior. Both candidates declare
+text output, repository read, and structured execution events. Caller provider
+order becomes candidate order and policy default order, with no rules or hidden
+preferences. Existing router/orchestrator code is unchanged.
 
 Human output shows the provider and final message, sanitized failure
 code/message, or useful rejection facts. JSON mode writes only the durable
@@ -335,7 +335,7 @@ Planned adapters include:
 
 Provider-specific authentication, SDKs, and response formats belong behind
 adapter boundaries. The core must not require Codex-specific types even though
-Codex is the first planned provider.
+Codex was the first implemented provider.
 
 ### Initial Codex CLI Transport (Implemented in M2)
 
@@ -436,22 +436,36 @@ part of the core.
 
 These are initial pre-1.0 contracts and may evolve before Vornariq 1.0.
 
+## Public package boundary
+
+The root export includes contracts, adapters, routing, orchestration,
+comparison, and existing low-level process-runner injection seams. Parsers,
+prompt builders, fixtures, Doctor helpers, and CLI internals are not root
+exports; package exports restrict consumer subpaths. Existing runner exports are
+retained for compatibility and return raw diagnostics to callers; only adapter
+ExecutionResult failures carry the sanitization guarantee. Successful assistant
+text is not redacted.
+
 ## Observability
 
-Executions are expected to record locally, when available:
+Execution results carry in-memory evidence when available; no history is
+persisted:
 
 - execution duration;
 - token usage;
 - estimated cost;
 - success or failure; and
-- deterministic test results.
+- optional provider-specific metadata. Evaluation/test results remain separate.
 
 Unknown metrics must remain unknown rather than being guessed. No telemetry will
 be sent by default.
 
 ## Security Boundaries
 
-Provider credentials remain external to configuration committed to Git. Tool and
-MCP access must be explicit and least-privilege. Shell execution, third-party
-integrations, and agent-generated actions require reviewable policy decisions
-and auditable results.
+Credentials and settings remain owned by provider CLIs. Provider processes
+inherit the caller environment; Vornariq does not isolate arbitrary
+customizations or create an OS sandbox. Codex requests read-only sandboxing by
+default and Gemini uses default approval mode without write opt-in. There is no
+Antigravity adapter. See [SECURITY.md](SECURITY.md) for limits. Free Doctor
+probes have deadlines; live provider execution has no Vornariq
+timeout/cancellation contract yet.

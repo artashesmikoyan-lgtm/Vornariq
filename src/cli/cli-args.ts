@@ -110,6 +110,13 @@ export function parseArgs(args: readonly string[]): CliCommand {
     throw new CliError(
       "--codex-workspace-write requires codex in --providers.",
     );
+  if (
+    seen.has("--codex-workspace-write") &&
+    !required.has("local-repository-write")
+  )
+    throw new CliError(
+      "--codex-workspace-write also requires --require local-repository-write.",
+    );
   return {
     command: "run",
     options: {
