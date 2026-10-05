@@ -6,6 +6,9 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Fixed
 
+- Gemini execution resolves Windows npm launchers through the same shell-free
+  resolver as Doctor, preserving arguments, stdin, and approval settings.
+
 - Doctor smoke failures retain the adapter's sanitized code, message, and
   retryable flag without exposing error details or raw process output.
 

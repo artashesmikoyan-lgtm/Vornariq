@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import * as launchers from "../../../src/providers/resolve-local-command.js";
 
 import {
   buildGeminiExecArgs,
@@ -11,6 +12,54 @@ import {
 import { GeminiProtocolError } from "../../../src/providers/gemini/gemini-stream-json.js";
 
 describe("Gemini process boundary", () => {
+  it("launches resolved npm scripts with original arguments and stdin", async () => {
+    const resolver = vi
+      .spyOn(launchers, "resolveLocalCommand")
+      .mockReturnValue({
+        executable: process.execPath,
+        prefix: [
+          "-e",
+          "process.stdin.resume(); process.stdin.on('end', () => console.log(JSON.stringify(process.argv.slice(1))));",
+          "--",
+        ],
+      });
+    try {
+      const lines: string[] = [];
+      const result = await new NodeGeminiProcessRunner().run({
+        executable: "fixture-gemini",
+        args: ["--version"],
+        cwd: resolve("."),
+        stdin: "",
+        onStdoutLine: (line) => {
+          lines.push(line);
+        },
+      });
+      expect(resolver).toHaveBeenCalledWith("fixture-gemini");
+      expect(result.exitCode).toBe(0);
+      expect(JSON.parse(lines[0] ?? "")).toEqual(["--version"]);
+    } finally {
+      resolver.mockRestore();
+    }
+  });
+
+  it("rejects unsupported launchers without evaluating shell text", async () => {
+    const resolver = vi
+      .spyOn(launchers, "resolveLocalCommand")
+      .mockReturnValue(undefined);
+    try {
+      await expect(
+        new NodeGeminiProcessRunner().run({
+          executable: "fixture-gemini",
+          args: [],
+          cwd: resolve("."),
+          stdin: "",
+          onStdoutLine: () => undefined,
+        }),
+      ).rejects.toThrow("Unsupported Gemini CLI launcher.");
+    } finally {
+      resolver.mockRestore();
+    }
+  });
   it("uses headless stream-json with the default approval policy", () => {
     expect(buildGeminiExecArgs({ sandbox: false })).toEqual([
       "--approval-mode",

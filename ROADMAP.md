@@ -67,6 +67,9 @@ describe the current invocation; they do not persist gate history.
 Failed smoke reports retain sanitized provider failure reasons. Live Codex
 validation remains an open gate; offline diagnostic tests do not close it.
 
+Gemini's Windows npm launcher resolution is covered offline. Live Gemini
+validation still requires successful CLI authentication and an approved smoke.
+
 ## Pre-v0.1 live release gates
 
 - [ ] Codex CLI compatibility verified in the release environment

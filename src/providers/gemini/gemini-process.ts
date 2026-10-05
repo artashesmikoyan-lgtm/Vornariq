@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { StringDecoder } from "node:string_decoder";
+import { resolveLocalCommand } from "../resolve-local-command.js";
 
 import { GeminiProtocolError } from "./gemini-stream-json.js";
 
@@ -48,12 +49,21 @@ export function buildGeminiExecArgs({
 export class NodeGeminiProcessRunner implements GeminiProcessRunner {
   run(request: GeminiProcessRequest): Promise<GeminiProcessResult> {
     return new Promise((resolve, reject) => {
-      const child = spawn(request.executable, [...request.args], {
-        cwd: request.cwd,
-        shell: false,
-        stdio: ["pipe", "pipe", "pipe"],
-        windowsHide: true,
-      });
+      const resolved = resolveLocalCommand(request.executable);
+      if (resolved === undefined) {
+        reject(new Error("Unsupported Gemini CLI launcher."));
+        return;
+      }
+      const child = spawn(
+        resolved.executable,
+        [...resolved.prefix, ...request.args],
+        {
+          cwd: request.cwd,
+          shell: false,
+          stdio: ["pipe", "pipe", "pipe"],
+          windowsHide: true,
+        },
+      );
       const stdoutDecoder = new StringDecoder("utf8");
       const stderrChunks: Buffer[] = [];
       let pendingStdout = "";

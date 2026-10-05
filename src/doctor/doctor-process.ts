@@ -1,6 +1,5 @@
 import { spawn } from "node:child_process";
-import { readFileSync, statSync } from "node:fs";
-import { delimiter, dirname, join, resolve } from "node:path";
+import { resolveLocalCommand } from "../providers/resolve-local-command.js";
 
 export interface ProbeResult {
   readonly status:
@@ -20,41 +19,10 @@ export type Probe = (
 export const MAX_PROBE_BYTES = 128 * 1024;
 export const PROBE_TIMEOUT_MS = 15000;
 
-/** Resolve only installed Windows launchers; never evaluate shell text. */
-function command(
-  executable: string,
-): { executable: string; prefix: string[] } | undefined {
-  if (process.platform !== "win32") return { executable, prefix: [] };
-  for (const directory of (process.env.PATH ?? "").split(delimiter)) {
-    for (const extension of [".exe", ".cmd"]) {
-      const path = join(
-        directory.replace(/^"|"$/g, ""),
-        executable + extension,
-      );
-      try {
-        const info = statSync(path);
-        if (!info.isFile()) continue;
-        if (extension === ".exe") return { executable: path, prefix: [] };
-        if (info.size > 65536) return undefined;
-        const shim = readFileSync(path, "utf8");
-        const script = /"%(?:~dp0|dp0%)([^"\r\n]+\.[cm]?js)"/i.exec(shim)?.[1];
-        if (script === undefined) return undefined;
-        const target = resolve(dirname(path), script.replace(/^[\\/]/, ""));
-        if (!statSync(target).isFile()) return undefined;
-        return { executable: process.execPath, prefix: [target] };
-      } catch {
-        // Missing PATH entry: continue to the next installed executable.
-        continue;
-      }
-    }
-  }
-  return { executable, prefix: [] };
-}
-
 /** Bounded local command capture. No stderr, raw errors, or paths leave this seam. */
 export const probeProcess: Probe = (executable, args, cwd) =>
   new Promise((resolveResult) => {
-    const resolved = command(executable);
+    const resolved = resolveLocalCommand(executable);
     if (resolved === undefined) {
       resolveResult({ status: "unsupported-shim", stdout: "" });
       return;
