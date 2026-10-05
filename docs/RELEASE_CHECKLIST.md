@@ -1,11 +1,13 @@
 # v0.1 release checklist
 
-TASK-014 prepares the repository at 0.0.1; it does not publish. Checked evidence
-is a dated snapshot, not a permanent guarantee. Recheck package-name
-availability and changes since the audit before release. See
+TASK-015A prepares the GitHub pre-release at 0.1.0; npm remains unpublished.
+Checked evidence is a dated snapshot, not a permanent guarantee. Recheck
+package-name availability and changes since the audit before release. See
 [readiness](V0_1_READINESS.md).
 
 ## Repository
+
+- [x] Initial public-push Linux/Windows CI green at `568b8a7`.
 
 - [ ] Clean working tree after the release-preparation commit.
 - [x] Public documentation reviewed for implemented behavior and PRE-ALPHA
@@ -15,7 +17,7 @@ availability and changes since the audit before release. See
 - [x] MIT license, security policy, contributing guide, and Code of Conduct
       reviewed.
 - [ ] Actual GitHub Linux/Windows CI green on the release commit.
-- [ ] Enable private vulnerability reporting and confirm the reporting channel.
+- [x] Enable private vulnerability reporting and confirm the reporting channel.
 
 ## Package
 
@@ -25,13 +27,13 @@ availability and changes since the audit before release. See
 
 - [x] `vornariq` registry lookup returned E404 on 2026-10-05; no public
       collision found.
-- [ ] Final package dry-run inspected after release build.
+- [x] Final package dry-run inspected after release build.
 - [ ] Installed tarball CLI help/version smoke passes on the release artifact.
-- [ ] Version updated from 0.0.1 to 0.1.0 in package and public identity
+- [x] Version updated from 0.0.1 to 0.1.0 in package and public identity
       metadata.
-- [ ] Matching version assertions and lockfile updated where necessary.
-- [ ] Changelog finalized for the actual release.
-- [ ] Real repository, bugs, and homepage metadata configured after URL exists.
+- [x] Matching version assertions and lockfile updated where necessary.
+- [x] Changelog finalized for the actual release.
+- [x] Real repository, bugs, and homepage metadata configured after URL exists.
 
 ## Providers
 
@@ -47,9 +49,9 @@ Gemini API-key/enterprise live E2E remains pending separate authorization; it is
 not a blocker to public PRE-ALPHA repository preparation. No automatic provider
 revalidation or paid calls are authorized by this checklist.
 
-## Release — TASK-015, separately authorized
+## Release — TASK-015A GitHub; TASK-015B npm
 
-- [ ] Public GitHub repository created with intended owner/name.
+- [x] Public GitHub repository created with intended owner/name.
 - [ ] Release-preparation commit pushed and CI verified.
 - [ ] Version tag created on the verified release commit.
 - [ ] GitHub release created.

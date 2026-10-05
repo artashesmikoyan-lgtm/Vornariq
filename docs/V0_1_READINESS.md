@@ -1,4 +1,35 @@
-# v0.1 readiness audit — TASK-014
+# v0.1 release readiness
+
+## TASK-015A — GitHub release preparation (2026-10-05)
+
+Public repository:
+[artashesmikoyan-lgtm/Vornariq](https://github.com/artashesmikoyan-lgtm/Vornariq).
+Metadata commit: `568b8a7`. Version is now **0.1.0**, PRE-ALPHA; npm is **not
+published**. Real repository/issues/homepage URLs are configured, Issues
+enabled, MIT recognized, and private vulnerability reporting enabled. The
+rendered README was verified.
+
+[Initial hosted CI](https://github.com/artashesmikoyan-lgtm/Vornariq/actions/runs/37301850417)
+passed on Linux (Node 22.13.0) and Windows (Node 24). No hosted-CI fix was
+needed. The release commit and its separate hosted CI gate will be recorded
+after push; no tag or GitHub release has been created at this preparation stage.
+
+The package/public identity and version test now match 0.1.0. The pnpm lockfile
+has no root package-version field and dependency specifications are unchanged,
+so no lockfile edit is needed. Changelog finalized for 2026-10-05. Final local
+`pnpm check` passed all gates, including 240 tests across 23 files. The 0.1.0
+package dry-run contains the same 85 allowed files. Built help, version (0.1.0),
+free Doctor, and whitespace checks passed. An early command stopped before the
+quality gates because a version replacement also matched a dependency pin; that
+edit was corrected, and all dependency pins/lockfile remain unchanged.
+
+Provider state remains: Codex 0.154.0 Windows authenticated read-only E2E passed
+in prior work; Gemini 0.62.0 compatibility passed but live E2E unverified and
+personal OAuth constrained; Antigravity absent/security-blocked. Hosted CI uses
+only offline tests and does not expand live-provider platform claims. macOS is
+unverified. TASK-015A performs zero model calls and no npm publication.
+
+## Historical TASK-014 audit snapshot
 
 Date: 2026-10-05. Target: **public PRE-ALPHA repository**, followed by
 separately authorized 0.1.0 release preparation. Version remains **0.0.1**.

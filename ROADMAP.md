@@ -4,16 +4,16 @@ Vornariq is PRE-ALPHA. Completed milestones describe implemented and
 offline-tested behavior, not production readiness or universal provider
 compatibility.
 
-| Milestone                      | Status   | Evidence/scope                                                                                          |
-| ------------------------------ | -------- | ------------------------------------------------------------------------------------------------------- |
-| M0 — OSS foundation            | COMPLETE | MIT license, repository guides, TypeScript tooling, CI workflow. Public CI still awaits publication.    |
-| M1 — Core contracts            | COMPLETE | Provider-neutral task, agent, execution, evaluation data contracts and tests.                           |
-| M2 — Codex provider            | COMPLETE | CLI adapter, offline conformance, prior Windows 0.154.0 authenticated read-only E2E.                    |
-| M3 — Multi-provider foundation | COMPLETE | Gemini adapter, conformance suite, sequential comparison report. Gemini live E2E is separately pending. |
-| M4 — Router v1                 | COMPLETE | Deterministic selection without execution or inferred permissions.                                      |
-| M5 — Routed execution CLI      | COMPLETE | TASK-008 orchestrator and TASK-009 CLI; one selected provider, no retry/fallback.                       |
-| M6 — Diagnostics / validation  | COMPLETE | TASK-010 free Doctor, explicit live-smoke support, safe failure reporting; no persisted gate history.   |
-| M7 — Public v0.1               | NEXT     | TASK-014 audit, then separately authorized TASK-015 repository/release preparation.                     |
+| Milestone                      | Status   | Evidence/scope                                                                                               |
+| ------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------ |
+| M0 — OSS foundation            | COMPLETE | MIT license, repository guides, TypeScript tooling, CI workflow. Hosted Linux and Windows offline CI passes. |
+| M1 — Core contracts            | COMPLETE | Provider-neutral task, agent, execution, evaluation data contracts and tests.                                |
+| M2 — Codex provider            | COMPLETE | CLI adapter, offline conformance, prior Windows 0.154.0 authenticated read-only E2E.                         |
+| M3 — Multi-provider foundation | COMPLETE | Gemini adapter, conformance suite, sequential comparison report. Gemini live E2E is separately pending.      |
+| M4 — Router v1                 | COMPLETE | Deterministic selection without execution or inferred permissions.                                           |
+| M5 — Routed execution CLI      | COMPLETE | TASK-008 orchestrator and TASK-009 CLI; one selected provider, no retry/fallback.                            |
+| M6 — Diagnostics / validation  | COMPLETE | TASK-010 free Doctor, explicit live-smoke support, safe failure reporting; no persisted gate history.        |
+| M7 — Public v0.1               | NEXT     | Public repository and initial hosted CI complete; TASK-015A prepares the GitHub pre-release.                 |
 
 ## Pre-v0.1 live release gates
 
@@ -33,13 +33,13 @@ boundary. There is no production adapter or routing candidate. Preserve the
 [security gate](docs/ANTIGRAVITY_SECURITY_GATE.md) as research, not runtime
 support.
 
-## Release preparation — NEXT
+## Release preparation — IN PROGRESS
 
-Use [the readiness handoff](docs/V0_1_READINESS.md) and
-[release checklist](docs/RELEASE_CHECKLIST.md). Keep 0.0.1 during the audit.
-TASK-015 may prepare 0.1.0, configure actual repository metadata, create/push
-the public repository, verify hosted CI, and then tag/release/publish only with
-its own explicit authorization. No release action is implied by this roadmap.
+The [public repository](https://github.com/artashesmikoyan-lgtm/Vornariq) exists
+and initial Linux/Windows CI passed. TASK-015A prepares version 0.1.0 and its
+GitHub pre-release, gated on the release commit's hosted CI. npm publication
+remains separately authorized TASK-015B work. See
+[readiness](docs/V0_1_READINESS.md) and [checklist](docs/RELEASE_CHECKLIST.md).
 
 ## Future work — FUTURE
 

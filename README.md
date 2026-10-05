@@ -52,7 +52,10 @@ from model execution; explicit live smoke uses the orchestrator. See
 
 From a source checkout, use Node.js 22.13+ on the 22 LTS line or Node.js 24 LTS
 and pnpm 11.19.0. The runtime engine remains Node.js >=22; local validation used
-24.19.0. Linux CI is configured but has not run publicly; macOS is unverified.
+24.19.0.
+[Hosted Linux and Windows CI](https://github.com/artashesmikoyan-lgtm/Vornariq/actions)
+passes offline quality gates; live-provider validation remains Windows-only.
+macOS is unverified.
 
 ```sh
 git clone https://github.com/artashesmikoyan-lgtm/Vornariq.git
@@ -72,7 +75,7 @@ node dist/cli.js run "Review this repository architecture" --require local-repos
 This invokes a real provider and may consume account quota. Automated tests and
 help/version commands require no provider installation, network, or model calls.
 The package declares a `vornariq` binary; once installed from a local package or
-a future published release, the equivalent command is:
+a future npm release, the equivalent command is:
 
 ```sh
 vornariq run "Review this repository architecture" --require local-repository-read

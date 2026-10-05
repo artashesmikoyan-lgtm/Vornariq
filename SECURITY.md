@@ -5,6 +5,10 @@ reports are still welcome.
 
 ## Reporting a Vulnerability
 
+The public repository has
+[private vulnerability reporting](https://github.com/artashesmikoyan-lgtm/Vornariq/security/advisories/new)
+enabled. Use that channel for sensitive reports.
+
 Do not publish exploitable details in a public issue. If GitHub private
 vulnerability reporting is enabled for the repository, use it to contact the
 maintainers privately. If it is not enabled, open a public issue that requests a

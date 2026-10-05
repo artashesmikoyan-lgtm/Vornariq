@@ -43,7 +43,7 @@ describe("project metadata", () => {
     expect(project).toEqual({
       name: "Vornariq",
       packageName: "vornariq",
-      version: "0.0.1",
+      version: "0.1.0",
       tagline: "Intelligent orchestration for coding agents.",
       status: "pre-alpha",
     });

@@ -4,6 +4,26 @@ All notable changes to Vornariq will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-05
+
+First public PRE-ALPHA GitHub release. npm publication is a separate step.
+
+### Release scope and limitations
+
+- Provider-neutral contracts, Codex/Gemini adapters, conformance and sequential
+  comparison infrastructure, deterministic routing, one-provider orchestration,
+  and the `vornariq run` / `vornariq doctor` CLI.
+- Codex CLI 0.154.0 authenticated read-only E2E was validated on Windows in
+  prior work; Linux and Windows hosted offline CI now pass.
+- Codex defaults to read-only; CLI write mode requires both an explicit write
+  requirement and permission flag. Vornariq does not create its own OS sandbox.
+- Gemini live E2E remains unverified and personal OAuth is constrained upstream.
+  API-key/enterprise paths remain unverified in Vornariq.
+- Antigravity is not supported; its read-only security gate remains blocked.
+- No orchestration fallback/retry; provider-internal behavior remains external.
+- Hosted CI is not live-provider validation. macOS is unverified. PRE-ALPHA APIs
+  may change.
+
 ### Fixed
 
 - Require both an explicit repository-write requirement and Codex write grant
