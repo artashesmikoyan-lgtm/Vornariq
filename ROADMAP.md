@@ -72,6 +72,11 @@ validation still requires successful CLI authentication and an approved smoke.
 
 ## Pre-v0.1 live release gates
 
+TASK-012 assessed Antigravity CLI as CONDITIONAL_GO. See
+[the security spike](docs/ANTIGRAVITY_PROVIDER_SPIKE.md) for the required
+read-only policy, customization isolation, and timeout safeguards before
+TASK-013. No Antigravity provider is implemented or enabled.
+
 - [ ] Codex CLI compatibility verified in the release environment
 - [ ] Codex real read-only E2E passed
 - [ ] Gemini CLI installed

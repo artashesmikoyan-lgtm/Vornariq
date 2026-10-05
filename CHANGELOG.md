@@ -14,6 +14,10 @@ All notable changes to Vornariq will be documented in this file.
 
 ### Added
 
+- TASK-012 Antigravity discovery/security assessment with conditional
+  integration prerequisites; no Antigravity provider implementation or live
+  model execution.
+
 - Local `vornariq doctor` environment/provider diagnostics, feature-based CLI
   checks, JSON/human output, and visible unverified E2E gates.
 - Explicit single-provider read-only `doctor --live` smoke paths with response
