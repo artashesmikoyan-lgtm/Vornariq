@@ -1,5 +1,36 @@
 # v0.1 release readiness
 
+## TASK-015B.1 — npm publication completed (2026-10-05)
+
+[`vornariq@0.1.0`](https://www.npmjs.com/package/vornariq) is public on npm,
+published by `artmik` using npm 11.17.0 and official interactive 2FA. Registry
+metadata confirms MIT, the intended repository, Node >=22.0.0,
+`bin.vornariq = dist/cli.js`, and `latest = 0.1.0`. The version list contains
+only 0.1.0; the public registry serves the README.
+
+Baseline `fb0277c` was clean and differed from release tag `v0.1.0` only in
+three excluded documentation files. The package contains 85 allowed files; its
+registry SHA-1 is `42237b5ac61f2fc63821a7ef26f70708d7625a47`, matching the
+locally tested tarball. npm's warning that the bin script was "invalid and
+removed" was verified against its installed normalization code: it strips `./`
+and retains the mapping. The packed manifest retains `./dist/cli.js`; the CLI
+file is present. No `npm pkg fix` or package-content change was made.
+
+The initial TASK-015B attempt failed with E403 and left the registry absent. The
+separately authorized TASK-015B.1 made one real publish attempt, which succeeded
+after browser authentication. A fresh temporary installation with an empty npm
+cache resolved the tarball from registry.npmjs.org. Version `0.1.0`, root help,
+run help, doctor help, and root ESM import (13 exports) all passed on Windows,
+Node 24.19.0. Model-provider calls: **0**.
+
+The preceding local `pnpm check` passed all gates and 240 offline tests after a
+sandbox temporary-cache error was resolved by running outside the sandbox.
+Publication follow-up changes are documentation-only. The GitHub tag and release
+are unchanged. Existing provider/platform limitations remain below; registry
+install smoke does not establish live-provider compatibility.
+
+**TASK-015B.1: GREEN.**
+
 ## TASK-015A — GitHub release completed (2026-10-05)
 
 Public repository:

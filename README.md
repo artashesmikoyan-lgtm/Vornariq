@@ -50,6 +50,19 @@ from model execution; explicit live smoke uses the orchestrator. See
 
 ## Quick Start
 
+Install the public [npm package](https://www.npmjs.com/package/vornariq)
+(Node.js >=22):
+
+```sh
+npm install -g vornariq
+vornariq --help
+vornariq --version
+```
+
+Or run `npx vornariq@0.1.0 --help` without a global installation. Version 0.1.0
+is published; a clean registry install and CLI/ESM import smoke passed on
+Windows. Vornariq remains PRE-ALPHA.
+
 From a source checkout, use Node.js 22.13+ on the 22 LTS line or Node.js 24 LTS
 and pnpm 11.19.0. The runtime engine remains Node.js >=22; local validation used
 24.19.0.
@@ -74,14 +87,12 @@ node dist/cli.js run "Review this repository architecture" --require local-repos
 
 This invokes a real provider and may consume account quota. Automated tests and
 help/version commands require no provider installation, network, or model calls.
-The package declares a `vornariq` binary; once installed from a local package or
-a future npm release, the equivalent command is:
+The installed npm package exposes the `vornariq` binary; the equivalent command
+is:
 
 ```sh
 vornariq run "Review this repository architecture" --require local-repository-read
 ```
-
-This repository is PRE-ALPHA; these examples do not imply npm publication.
 
 ### CLI options and security
 

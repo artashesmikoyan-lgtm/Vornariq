@@ -1,6 +1,7 @@
 # v0.1 release checklist
 
-TASK-015A published the GitHub pre-release at 0.1.0; npm remains unpublished.
+TASK-015A published the GitHub pre-release at 0.1.0; TASK-015B.1 published
+`vornariq@0.1.0` to npm on 2026-10-05 and verified a clean registry install.
 Checked evidence is a dated snapshot, not a permanent guarantee. Recheck
 package-name availability and changes since the audit before release. See
 [readiness](V0_1_READINESS.md).
@@ -28,7 +29,7 @@ package-name availability and changes since the audit before release. See
 - [x] `vornariq` registry lookup returned E404 on 2026-10-05; no public
       collision found.
 - [x] Final package dry-run inspected after release build.
-- [ ] Installed tarball CLI help/version smoke passes on the release artifact.
+- [x] Installed tarball CLI help/version smoke passes on the release artifact.
 - [x] Version updated from 0.0.1 to 0.1.0 in package and public identity
       metadata.
 - [x] Matching version assertions and lockfile updated where necessary.
@@ -55,8 +56,10 @@ revalidation or paid calls are authorized by this checklist.
 - [x] Release-preparation commit pushed and CI verified.
 - [x] Version tag created on the verified release commit.
 - [x] GitHub release created.
-- [ ] npm publication completed using the intended account.
-- [ ] Post-publication install and harmless CLI smoke verified.
+- [x] npm publication completed using the intended account (`artmik`).
+- [x] Post-publication install and harmless CLI smoke verified on Windows.
+- [x] Registry metadata, CLI bin mapping, `latest = 0.1.0`, and root ESM import
+      verified; only version 0.1.0 published, with zero model calls.
 
 Never tick publication, hosted CI, or live-provider gates based only on a local
 build. Do not include credentials, raw provider logs, or personal paths in

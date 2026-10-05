@@ -6,7 +6,9 @@ All notable changes to Vornariq will be documented in this file.
 
 ## [0.1.0] - 2026-10-05
 
-First public PRE-ALPHA GitHub release. npm publication is a separate step.
+First public PRE-ALPHA GitHub and npm release. `vornariq@0.1.0` is public on npm
+with `latest` pointing to 0.1.0. A clean Windows registry install passed CLI
+version/help and root ESM import smoke checks without model calls.
 
 ### Release scope and limitations
 
