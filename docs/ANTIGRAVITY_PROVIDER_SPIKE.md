@@ -4,6 +4,11 @@ Assessment date: 2026-10-05. Decision: **CONDITIONAL_GO**. No Antigravity
 provider, parser, routing candidate, or Doctor integration was implemented.
 Model invocations: Antigravity 0, Codex 0, Gemini 0.
 
+Subsequent TASK-013 decision: **SECURITY_BLOCKED**. The
+[read-only security gate](ANTIGRAVITY_SECURITY_GATE.md) supersedes this conditional
+architecture recommendation for repository execution. No safe runtime profile
+has been established.
+
 ## 1. Executive conclusion
 
 The transport is a credible adapter target, but the installed CLI is not a

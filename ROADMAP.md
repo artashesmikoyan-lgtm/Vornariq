@@ -72,9 +72,14 @@ validation still requires successful CLI authentication and an approved smoke.
 
 ## Pre-v0.1 live release gates
 
-TASK-012 assessed Antigravity CLI as CONDITIONAL_GO. See
+TASK-013 classifies Antigravity repository execution as **SECURITY_BLOCKED**.
+See [the read-only security gate](docs/ANTIGRAVITY_SECURITY_GATE.md). A reproducible
+Windows boundary controlling filesystem writes and inherited customizations is
+required before implementation or an approved active denial smoke.
+
+TASK-012 assessed the Antigravity architecture as CONDITIONAL_GO. See
 [the security spike](docs/ANTIGRAVITY_PROVIDER_SPIKE.md) for the required
-read-only policy, customization isolation, and timeout safeguards before
+read-only policy, customization isolation, and timeout safeguards evaluated by
 TASK-013. No Antigravity provider is implemented or enabled.
 
 - [ ] Codex CLI compatibility verified in the release environment
