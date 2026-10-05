@@ -1,6 +1,6 @@
 # v0.1 release checklist
 
-TASK-015A prepares the GitHub pre-release at 0.1.0; npm remains unpublished.
+TASK-015A published the GitHub pre-release at 0.1.0; npm remains unpublished.
 Checked evidence is a dated snapshot, not a permanent guarantee. Recheck
 package-name availability and changes since the audit before release. See
 [readiness](V0_1_READINESS.md).
@@ -9,14 +9,14 @@ package-name availability and changes since the audit before release. See
 
 - [x] Initial public-push Linux/Windows CI green at `568b8a7`.
 
-- [ ] Clean working tree after the release-preparation commit.
+- [x] Clean working tree after the release-preparation commit.
 - [x] Public documentation reviewed for implemented behavior and PRE-ALPHA
       status.
 - [x] Tracked files/history scanned; no known committed credentials.
 - [x] Current public documents use portable paths; research history retained.
 - [x] MIT license, security policy, contributing guide, and Code of Conduct
       reviewed.
-- [ ] Actual GitHub Linux/Windows CI green on the release commit.
+- [x] Actual GitHub Linux/Windows CI green on the release commit.
 - [x] Enable private vulnerability reporting and confirm the reporting channel.
 
 ## Package
@@ -52,9 +52,9 @@ revalidation or paid calls are authorized by this checklist.
 ## Release — TASK-015A GitHub; TASK-015B npm
 
 - [x] Public GitHub repository created with intended owner/name.
-- [ ] Release-preparation commit pushed and CI verified.
-- [ ] Version tag created on the verified release commit.
-- [ ] GitHub release created.
+- [x] Release-preparation commit pushed and CI verified.
+- [x] Version tag created on the verified release commit.
+- [x] GitHub release created.
 - [ ] npm publication completed using the intended account.
 - [ ] Post-publication install and harmless CLI smoke verified.
 

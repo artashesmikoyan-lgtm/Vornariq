@@ -1,6 +1,6 @@
 # v0.1 release readiness
 
-## TASK-015A — GitHub release preparation (2026-10-05)
+## TASK-015A — GitHub release completed (2026-10-05)
 
 Public repository:
 [artashesmikoyan-lgtm/Vornariq](https://github.com/artashesmikoyan-lgtm/Vornariq).
@@ -11,8 +11,14 @@ rendered README was verified.
 
 [Initial hosted CI](https://github.com/artashesmikoyan-lgtm/Vornariq/actions/runs/37301850417)
 passed on Linux (Node 22.13.0) and Windows (Node 24). No hosted-CI fix was
-needed. The release commit and its separate hosted CI gate will be recorded
-after push; no tag or GitHub release has been created at this preparation stage.
+needed. Release commit: `2e8e54ca90b31560b3450b33ffab5fc801cdec00`.
+[Release-commit CI](https://github.com/artashesmikoyan-lgtm/Vornariq/actions/runs/37302321083)
+also passed both jobs before tagging. Annotated `v0.1.0` resolves to that exact
+commit locally and remotely.
+[GitHub release](https://github.com/artashesmikoyan-lgtm/Vornariq/releases/tag/v0.1.0)
+is published as a pre-release, not a draft or latest stable release. Local state
+was clean after release creation. A documentation-only follow-up records these
+verified facts without moving the release tag.
 
 The package/public identity and version test now match 0.1.0. The pnpm lockfile
 has no root package-version field and dependency specifications are unchanged,
@@ -27,7 +33,11 @@ Provider state remains: Codex 0.154.0 Windows authenticated read-only E2E passed
 in prior work; Gemini 0.62.0 compatibility passed but live E2E unverified and
 personal OAuth constrained; Antigravity absent/security-blocked. Hosted CI uses
 only offline tests and does not expand live-provider platform claims. macOS is
-unverified. TASK-015A performs zero model calls and no npm publication.
+unverified. TASK-015A performed zero model calls and no npm publication.
+
+**TASK-015A: GREEN.** Remaining publication action is separately authorized
+TASK-015B: publish `vornariq@0.1.0` to npm and run a clean post-publication
+install smoke. No npm login, package reservation, or publication occurred here.
 
 ## Historical TASK-014 audit snapshot
 
