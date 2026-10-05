@@ -41,6 +41,11 @@ export interface DoctorReport {
     readonly durationMs: number;
     readonly executionStatus: string;
     readonly errorCode?: string;
+    readonly providerFailure?: {
+      readonly code: string;
+      readonly message: string;
+      readonly retryable: boolean;
+    };
   };
 }
 export interface DoctorDependencies {
@@ -227,6 +232,15 @@ export async function diagnose(
           success,
           durationMs: Math.max(0, performance.now() - started),
           executionStatus: execution?.status ?? "unroutable",
+          ...(execution?.status === "failed"
+            ? {
+                providerFailure: {
+                  code: execution.error.code,
+                  message: execution.error.message,
+                  retryable: execution.error.retryable,
+                },
+              }
+            : {}),
           ...(success
             ? {}
             : {
@@ -309,6 +323,9 @@ export function doctorOutput(report: DoctorReport): string {
       ? []
       : [
           `Live smoke: ${report.liveSmoke.success ? "passed" : "failed"} (${report.liveSmoke.executionStatus}) ${report.liveSmoke.errorCode ?? ""}`,
+          ...(report.liveSmoke.providerFailure === undefined
+            ? []
+            : [`Provider failure: ${report.liveSmoke.providerFailure.code}`]),
         ]),
     "Install missing providers manually; verify required flags with their help command.",
     "Live smoke requires explicit --live and consumes provider/account resources.",

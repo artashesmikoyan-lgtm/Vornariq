@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync, statSync } from "node:fs";
-import { diagnose } from "../../src/doctor/doctor.js";
+import { diagnose, doctorOutput } from "../../src/doctor/doctor.js";
+import { CodexProviderAdapter } from "../../src/providers/codex/index.js";
+import { FakeCodexProcessRunner } from "../providers/codex/test-support.js";
 import type { Probe, ProbeResult } from "../../src/doctor/doctor-process.js";
 import { runCli } from "../../src/cli/run-cli.js";
 import { parseArgs } from "../../src/cli/cli-args.js";
@@ -41,9 +43,10 @@ function factory(failed = false, mismatch = false) {
             ...base,
             status: "failed" as const,
             error: {
-              code: "RAW_SECRET_CODE",
-              message: "secret diagnostic",
+              code: "FIXTURE_FAILURE",
+              message: "Safe provider diagnostic.",
               retryable: true,
+              details: { stderr: "SECRET_STDERR", stack: "SECRET_STACK" },
             },
           }
         : {
@@ -284,6 +287,63 @@ describe("doctor diagnostics", () => {
       expect(fake.execute).toHaveBeenCalledTimes(1);
       expect(JSON.stringify(report)).not.toContain("SECRET");
       expect(JSON.stringify(report)).not.toContain("secret diagnostic");
+      if (!mismatch) {
+        expect(report.liveSmoke?.providerFailure).toEqual({
+          code: "FIXTURE_FAILURE",
+          message: "Safe provider diagnostic.",
+          retryable: true,
+        });
+        expect(doctorOutput(report)).toContain(
+          "Provider failure: FIXTURE_FAILURE",
+        );
+      } else {
+        expect(report.liveSmoke).not.toHaveProperty("providerFailure");
+      }
+      expect(JSON.parse(JSON.stringify(report))).toStrictEqual(report);
+    },
+  );
+  it.each([
+    ["Authentication required; SECRET_STDERR", "", "CODEX_AUTH_FAILED"],
+    ["SECRET_STDERR", "", "CODEX_PROCESS_FAILED"],
+    [
+      "",
+      '{"type":"error","message":"unauthorized SECRET_EVENT"}',
+      "CODEX_AUTH_FAILED",
+    ],
+    [
+      "",
+      '{"type":"turn.failed","error":{"message":"login required SECRET_EVENT"}}',
+      "CODEX_AUTH_FAILED",
+    ],
+  ])(
+    "preserves sanitized adapter failures (%s)",
+    async (stderr, stdout, code) => {
+      const runner = new FakeCodexProcessRunner({
+        stdout,
+        result: { exitCode: 1, stderr },
+      });
+      const adapter = new CodexProviderAdapter({
+        workingDirectory: cwd,
+        processRunner: runner,
+      });
+      const { report } = await diagnose(cwd, "codex", {
+        probe: probes(),
+        createCandidates: () => [
+          { providerId: "codex", capabilities: ["text-output"], adapter },
+        ],
+      });
+      expect(report.liveSmoke?.providerFailure).toEqual({
+        code,
+        message:
+          code === "CODEX_AUTH_FAILED"
+            ? "Codex CLI authentication failed."
+            : "Codex CLI exited without successful completion.",
+        retryable: false,
+      });
+      expect(report.liveSmoke?.errorCode).toBe("DOCTOR_PROVIDER_FAILED");
+      expect(JSON.stringify(report)).not.toContain("SECRET");
+      expect(JSON.parse(JSON.stringify(report))).toStrictEqual(report);
+      expect(runner.requests).toHaveLength(1);
     },
   );
 });

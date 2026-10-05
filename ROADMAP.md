@@ -64,6 +64,9 @@ usage. Explicit `--live codex|gemini` supports one read-only smoke through
 production orchestration, tested only with fakes during TASK-010. Reports
 describe the current invocation; they do not persist gate history.
 
+Failed smoke reports retain sanitized provider failure reasons. Live Codex
+validation remains an open gate; offline diagnostic tests do not close it.
+
 ## Pre-v0.1 live release gates
 
 - [ ] Codex CLI compatibility verified in the release environment

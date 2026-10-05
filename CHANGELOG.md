@@ -4,6 +4,11 @@ All notable changes to Vornariq will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Doctor smoke failures retain the adapter's sanitized code, message, and
+  retryable flag without exposing error details or raw process output.
+
 ### Added
 
 - Local `vornariq doctor` environment/provider diagnostics, feature-based CLI
