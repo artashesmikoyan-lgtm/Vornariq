@@ -44,6 +44,21 @@ CLI version/help, and root ESM import passed on Windows with zero model calls.
 The GitHub release and tag are unchanged. See
 [readiness](docs/V0_1_READINESS.md) and [checklist](docs/RELEASE_CHECKLIST.md).
 
+## Post-release adoption — TASK-016
+
+The [first-run demo](docs/DEMO.md), [examples](examples/README.md), usage
+feedback template, and [small contribution backlog](docs/ADOPTION_BACKLOG.md)
+establish the public adoption foundation. [ADOPTION.md](docs/ADOPTION.md)
+records sourced baseline metrics and a 2–4 week validation window: review around
+2026-10-19 and 2026-11-02 before choosing the next major feature.
+
+[Distribution candidates](docs/DISTRIBUTION.md) and
+[launch copy](docs/LAUNCH_COPY.md) are prepared, not posted. The
+[Codex for OSS log](docs/CODEX_FOR_OSS.md) contains factual evidence and
+internal targets, not an application or eligibility claim. Next priority is
+deliberate distribution and external install/execution feedback; future features
+remain conditional on that evidence. Version stays 0.1.0.
+
 ## Future work — FUTURE
 
 - OpenRouter or local provider expansion after scoped provider/security work.

@@ -4,6 +4,19 @@ All notable changes to Vornariq will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- TASK-016 public adoption foundation: prominent installed-package quick start,
+  concise routing and direct-provider positioning, troubleshooting, three
+  focused examples, and a five-minute demo.
+- Usage feedback template, issue chooser guidance, contributor on-ramp, scoped
+  adoption backlog, verified public baseline, and a 2–4 week validation
+  framework.
+- Factual Codex for OSS evidence log, internal readiness targets, researched
+  distribution candidates, and unpublished launch drafts. No runtime changes,
+  version bump, new release/publication, live model calls, or application
+  submission.
+
 ## [0.1.0] - 2026-10-05
 
 First public PRE-ALPHA GitHub and npm release. `vornariq@0.1.0` is public on npm

@@ -5,9 +5,81 @@
 Vornariq is a local-first, open-source orchestration layer for coding-agent
 providers. **PRE-ALPHA:** experimental, intended for reviewed local workflows.
 
-It gives provider differences a common TypeScript interface: explicit capability
-requirements select a configured provider, and the orchestrator executes that
-provider once. Provider authentication stays with the installed CLI.
+Vornariq sits between your development task and coding-agent providers: explicit
+capabilities select an eligible provider through deterministic ordering, then a
+common interface executes it once. Authentication stays with the installed CLI.
+
+Today: Codex is the default provider, with prior authenticated read-only E2E
+verified on Windows. The Gemini adapter is implemented but its live execution
+remains unverified. There is no automatic fallback/retry or quality ranking.
+
+## Quick Start
+
+Requires **Node.js >=22**. In a trusted repository directory:
+
+```sh
+npm install -g vornariq
+vornariq doctor
+vornariq run "Review this repository architecture" --require local-repository-read
+```
+
+Before the last command, the **Codex CLI must already be installed and
+authenticated**. Follow the
+[official Codex CLI setup](https://learn.chatgpt.com/docs/codex/cli); run
+`codex login` and complete its browser sign-in if needed, following the
+[official authentication guidance](https://learn.chatgpt.com/docs/auth).
+Vornariq does not install providers or manage their credentials.
+
+`doctor` without `--live` is free local diagnostics and invokes no model.
+`ready` means CLI compatibility, not authentication or a successful model run.
+The `run` command invokes Codex once and **may consume provider quota**. Codex
+defaults to **read-only**; requesting a capability does not grant write access.
+Vornariq relies on provider enforcement, not its own OS sandbox. PRE-ALPHA APIs
+and compatibility may change; review provider settings and generated output.
+
+Start with the
+[five-minute demo](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/docs/DEMO.md),
+[focused examples](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/examples/README.md),
+or [troubleshooting](#troubleshooting). No architecture reading is required.
+
+## How routing works
+
+```text
+Task → required capabilities → eligible providers → deterministic policy/order
+     → one selected provider → one execution
+```
+
+Requirements are explicit: Vornariq never infers capabilities or permissions
+from the prompt. The CLI picks the first eligible provider in `--providers`
+order (default `codex`). Eligibility reflects declared effective capabilities;
+it does not prove installation, authentication, or model access. A selected
+provider executes once, with no automatic fallback/retry on failure.
+
+Library routing considers the first matching policy rule, request preferences,
+policy defaults, then candidate order. Write permission is separate from a write
+requirement: CLI writes need both `--require local-repository-write` and
+`--codex-workspace-write`. With no eligible provider, nothing executes.
+
+## Why not just call Codex directly?
+
+Direct provider CLIs remain useful. Use Vornariq when you want provider-neutral
+contracts, deterministic eligibility/routing, consistent execution results, and
+provider diagnostics, or want to add adapters behind a common interface. These
+boundaries also form a future foundation for independent evaluation; no
+evaluation engine is implemented today. Vornariq is an orchestration layer
+around providers and does not claim to outperform Codex.
+
+## Tried it? Tell us what happened
+
+Use
+[I tried Vornariq](https://github.com/artashesmikoyan-lgtm/Vornariq/issues/new?template=usage_feedback.md)
+for first-run feedback, or the
+[issue chooser](https://github.com/artashesmikoyan-lgtm/Vornariq/issues/new/choose)
+for bugs and feature requests. Include your goal, versions, provider, and what
+was confusing. Remove secrets and private source; never share credentials, full
+environment variables, or authentication logs. Vulnerabilities belong in the
+private channel described in
+[SECURITY.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/SECURITY.md).
 
 ## What works today
 
@@ -20,7 +92,8 @@ provider once. Provider authentication stays with the installed CLI.
 
 There is no evaluation engine, agent registry, MCP integration, persistence,
 benchmark engine, cost optimization, or automatic fallback/retry. Future work
-belongs in [ROADMAP.md](ROADMAP.md).
+belongs in
+[ROADMAP.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/ROADMAP.md).
 
 ## Provider status
 
@@ -35,9 +108,10 @@ repeated by the release audit. Local validation covers Windows only.
 
 These are specific validation results, not guarantees for every version or
 platform. Gemini authentication documentation and observed upstream behavior can
-conflict; see the [readiness record](docs/V0_1_READINESS.md) for scope and
-sources. Antigravity research is retained in its
-[security gate](docs/ANTIGRAVITY_SECURITY_GATE.md).
+conflict; see the
+[readiness record](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/docs/V0_1_READINESS.md)
+for scope and sources. Antigravity research is retained in its
+[security gate](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/docs/ANTIGRAVITY_SECURITY_GATE.md).
 
 ## Current architecture
 
@@ -46,9 +120,9 @@ sources. Antigravity research is retained in its
 The orchestrator owns selection and execution. The router does not execute;
 comparison is a separate library operation. Doctor's free probes are separate
 from model execution; explicit live smoke uses the orchestrator. See
-[ARCHITECTURE.md](ARCHITECTURE.md).
+[ARCHITECTURE.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/ARCHITECTURE.md).
 
-## Quick Start
+## Installation details and source checkout
 
 Install the public [npm package](https://www.npmjs.com/package/vornariq)
 (Node.js >=22):
@@ -121,12 +195,18 @@ The write grant requires Codex in the provider list and an explicit
 `--require local-repository-write`. Both flags are required; neither alone
 enables write execution. Vornariq delegates enforcement to the provider and does
 not create an independent OS sandbox. Provider settings, customizations, and
-inherited environment remain trust boundaries; see [SECURITY.md](SECURITY.md).
+inherited environment remain trust boundaries; see
+[SECURITY.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/SECURITY.md).
 
 ```sh
-node dist/cli.js run "Update the tests" --require local-repository-write --codex-workspace-write
 node dist/cli.js run "Review auth" --providers gemini,codex --require local-repository-read --json
 ```
+
+This example selects Gemini first and consumes provider quota if execution
+starts; its live authentication remains unverified. For destructive-capable
+write mode, use the
+[explicit-write example](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/examples/02-explicit-write.md)
+only in a clean Git working tree, then review changes before accepting them.
 
 There is no retry or fallback if the selected provider fails or is unavailable.
 
@@ -178,7 +258,7 @@ Live success applies only to the current report; it is not persisted. JSON mode
 outputs one report even for ordinary probe failures. Help checks cannot prove
 stream protocol or authentication behavior. Historical release evidence is
 recorded above; free Doctor checks do not persist or reproduce it. See the
-[release checklist](docs/RELEASE_CHECKLIST.md).
+[release checklist](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/docs/RELEASE_CHECKLIST.md).
 
 ### Library entry point
 
@@ -334,8 +414,8 @@ defaults, then original candidate order. Unavailable or ineligible preferences
 are skipped; later matching rules are never used. Decisions explain selection
 and rejections, survive JSON round-trip, and use caller-supplied IDs/timestamps
 for determinism. No eligible candidate returns `status: "unroutable"`. See
-[routing semantics](ARCHITECTURE.md#implemented-routing-flow-m4) for input
-validation, empty-list behavior, and the capability trust boundary.
+[routing semantics](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/ARCHITECTURE.md#implemented-routing-flow-m4)
+for input validation, empty-list behavior, and the capability trust boundary.
 
 ## Routed Execution
 
@@ -367,8 +447,22 @@ There is no fallback, retry, comparison, quality scoring, or permission
 escalation. Effective capabilities must truthfully describe adapter
 configuration. The result retains the actual routing decision and provider
 result as JSON-safe evidence under the existing provider contract. See
-[routed execution architecture](ARCHITECTURE.md#implemented-routed-execution-task-008)
+[routed execution architecture](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/ARCHITECTURE.md#implemented-routed-execution-task-008)
 for identity, timestamps, and error semantics.
+
+## Troubleshooting
+
+| Symptom                                       | Next step                                                                                                                                     |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vornariq` is not found                       | Confirm the global npm executable directory is on PATH; reopen the terminal or try `npx vornariq@0.1.0 --help`.                               |
+| Doctor says Codex is unavailable/incompatible | Install Codex separately and check its version/help against the provider status above. Do not bypass security settings.                       |
+| Doctor says `ready` but a run fails           | Read the sanitized error. Authenticate in Codex itself with `codex login`; free doctor does not test login or account quota.                  |
+| No eligible provider (exit 2)                 | Check explicit requirements and provider order. A write requirement alone grants no permission.                                               |
+| Gemini fails                                  | Its live authentication path remains unverified. Choose `--providers codex` explicitly for a separate run if appropriate; no fallback occurs. |
+| Provider result did not succeed (exit 3)      | Inspect the error code/status and report a minimal sanitized reproduction. `--json` still emits the orchestration result.                     |
+
+Use `vornariq run --help` and `vornariq doctor --help` for options. pnpm is
+needed for source development, not for the globally installed package.
 
 ## Development
 
@@ -381,26 +475,33 @@ pnpm build
 ```
 
 Run `pnpm check` before submitting a pull request. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for the contributor workflow.
+[CONTRIBUTING.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/CONTRIBUTING.md)
+for the contributor workflow.
 
 ## Roadmap
 
 The roadmap progresses from core contracts and a Codex provider through routing,
 evaluation, controlled skills/MCP integration, and public validation. See
-[ROADMAP.md](ROADMAP.md) for milestone details.
+[ROADMAP.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/ROADMAP.md)
+for milestone details.
 
 ## Security
 
 Credentials must stay outside source control. Treat agent-generated shell
 commands, future tool access, and provider integrations as security-sensitive.
-See [SECURITY.md](SECURITY.md) before reporting a vulnerability.
+See
+[SECURITY.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/SECURITY.md)
+before reporting a vulnerability.
 
 ## Contributing
 
 Issues and focused pull requests are welcome while expectations are still taking
-shape. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[Code of Conduct](CODE_OF_CONDUCT.md).
+shape. Please read
+[CONTRIBUTING.md](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/CONTRIBUTING.md)
+and the
+[Code of Conduct](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
-Vornariq is available under the [MIT License](LICENSE).
+Vornariq is available under the
+[MIT License](https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/LICENSE).

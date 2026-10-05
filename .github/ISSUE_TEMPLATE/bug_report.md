@@ -29,3 +29,9 @@ What happened instead? Include sanitized errors or logs when useful.
 - Node.js version:
 - pnpm version:
 - Operating system:
+- Provider attempted and CLI version (if relevant):
+- Install method (global npm, npx, or source checkout):
+
+Optional: a minimal command and sanitized `vornariq doctor --json` output.
+Inspect output before sharing; remove private paths/source and secrets. Do not
+paste full environment variables, credential files, or authentication logs.

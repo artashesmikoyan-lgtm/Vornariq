@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security policy and private reporting
+    url: https://github.com/artashesmikoyan-lgtm/Vornariq/blob/main/SECURITY.md
+    about:
+      Use the security policy for vulnerabilities; omit sensitive details from
+      public issues.
+  - name: First-run troubleshooting
+    url: https://github.com/artashesmikoyan-lgtm/Vornariq#troubleshooting
+    about:
+      Check installation, diagnostics, permissions, and provider limitations.

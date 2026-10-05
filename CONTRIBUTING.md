@@ -52,3 +52,21 @@ Provider changes must preserve the provider-neutral contracts and pass the
 offline conformance harness. Automated tests must never call real Codex, Gemini,
 or another model service; use fake process seams and synthetic fixtures. Live
 checks require separate explicit approval and are not part of `pnpm check`.
+
+Provider credentials must remain external to the repository, fixtures, and PRs.
+Read [ARCHITECTURE.md](ARCHITECTURE.md) for boundaries: routing selects,
+orchestration executes one provider without retry/fallback, and comparison
+reports evidence without choosing a winner. Capability requirements never grant
+permissions. New adapters must pass the offline provider conformance harness.
+
+## Good first contributions
+
+- Clarify documentation or add a focused example from a real first-run problem.
+- Document provider compatibility with version/platform and evidence limits.
+- Add deterministic tests using fake providers or harmless local Node fixtures.
+- Improve actionable error messages without exposing process diagnostics.
+- Improve CLI help/UX while preserving behavior and permission boundaries.
+
+See [adoption backlog](docs/ADOPTION_BACKLOG.md) for small scoped candidates;
+these are proposals, not assigned GitHub issues. Complex provider integrations
+need separate design/security work. Prefer one small, focused PR.
